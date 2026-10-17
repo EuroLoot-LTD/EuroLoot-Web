@@ -979,8 +979,7 @@ function renderRefunds(){
 }
 
 function renderLogin(){
-  const REDIRECT_URI = encodeURIComponent("YOUR_CALLBACK_URL_HERE");
-  const GOOGLE_AUTH = `https://accounts.google.com/o/oauth2/v2/auth?client_id=GOOGLE_CLIENT_ID&redirect_uri=${REDIRECT_URI}&response_type=code&scope=email%20profile`;
+  const GOOGLE_AUTH = "#";
   const STEAM_AUTH = `https://steamcommunity.com/openid/login?openid.ns=http://specs.openid.net/auth/2.0&openid.mode=checkid_setup&openid.return_to=${REDIRECT_URI}&openid.realm=https://euroloot.eu`;
   const DISCORD_AUTH = `https://discord.com/api/oauth2/authorize?client_id=DISCORD_CLIENT_ID&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify`;
   const ITCH_AUTH = `https://itch.io/user/oauth?client_id=ITCH_CLIENT_ID&redirect_uri=${REDIRECT_URI}&response_type=token`;
@@ -991,7 +990,7 @@ function renderLogin(){
       <div class="auth-title">Sign In / Register</div>
       <p style="font-size:11px; color:var(--muted); text-align:center; margin-bottom:15px;">Sign in via your preferred European or global network link infrastructure.</p>
       
-      <a href="${GOOGLE_AUTH}" class="social-btn">Sign in with Google</a>
+      <button type="button" class="social-btn" onclick="signInWithGoogle()">Sign in with Google</button>
       <a href="${STEAM_AUTH}" class="social-btn">Sign in with Steam</a>
       <a href="${DISCORD_AUTH}" class="social-btn">Sign in with Discord</a>
       <a href="${ITCH_AUTH}" class="social-btn">Sign in with Itch.io</a>
@@ -1106,6 +1105,26 @@ if(initSecurityAndLocale()){
     navigate('home');
   });
 }
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseClient = window.supabase.createClient(
+    'https://gepavrbxsdjmmtvwwtdc.supabase.co',
+    'sb_publishable_zJNUK33LL5YQOu0mKDBY0g_FglwQg6N'
+  );
+
+  async function signInWithGoogle() {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'https://euroloot-ltd.github.io/EuroLoot-Web/'
+      }
+    });
+
+    if (error) {
+      alert('Google sign-in failed: ' + error.message);
+    }
+  }
 </script>
 </body>
 </html>
