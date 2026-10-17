@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="EuroLoot — Compare Steam game prices across the European Union.">
+<title>EuroLoot | Look What's Here</title>
+<link rel="icon" href="images/EuroLootIcon.png">
+<style>
+:root {
+  --eu-blue:  #003399;
+  --eu-blue-dark: #002266;
+  --eu-yellow:#ffd617;
+  --eu-yellow-dark: #e6c014;
+  --bg:       #ffffff;
+  --surface:  #f0f2f5;
+  --surf2:    #e4e7eb;
+  --card:     #ffffff;
+  --border:   #b0b5ba;
+  --fg:       #222222;
+  --muted:    #555555;
+  --muted2:   #777777;
+
+  --mint:     #006600;
+  --hot:      #cc0000;
+  
+  --ps-steam: #1b2838;
+  --font-main: Tahoma, Verdana, Arial, sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font-main);
+  font-size:13px;
+  line-height:1.5;
+  min-height:100vh;
+}
+img{display:block;max-width:100%;height:auto}
+a{color:var(--eu-blue);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit; border:1px solid var(--border); padding:4px;}
+ul{list-style:none}
+
+:focus-visible{outline:1px dotted var(--eu-blue);}
+
+#app{display:flex;flex-direction:column;min-height:100vh; display:none;} 
+#geo-block{display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; background:#f0f0f0; color:#cc0000; padding:20px; font-family:Tahoma,sans-serif;}
+.wrap{max-width:980px;margin:0 auto;padding:0 15px;width:100%}
+
+header{
+  background: #ffffff;
+  border-bottom: 4px solid var(--eu-blue);
+  color: var(--fg);
+  padding: 12px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+.header-inner{
+  display:flex;align-items:center;gap:15px;
+}
+.logo{display:flex;align-items:center;gap:10px; text-decoration:none !important;}
+.logo img{height:38px; border: 1px solid #ccc;}
+
+nav{display:flex;gap:5px;margin-left:15px;}
+nav a{
+  padding:6px 12px; font-size:13px; font-weight:bold;
+  color: var(--eu-blue); text-decoration:none !important;
+  border: 1px solid transparent;
+}
+nav a:hover,nav a.active{color: var(--eu-blue-dark); background: var(--surface); border:1px solid var(--border);}
+
+.header-search{flex:1;max-width:300px;position:relative}
+.header-search input{
+  width:100%;background:#fff;border:1px solid var(--border);
+  padding:5px 8px;font-size:12px;color:#000;
+}
+.search-dropdown{
+  position:absolute;top:100%;left:0;right:0;z-index:200;
+  background:#fff;border:1px solid var(--eu-blue);
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  max-height: 350px; overflow-y: auto;
+}
+.search-result-item{
+  display:flex;align-items:center;gap:10px;padding:6px;
+  border-bottom:1px solid #eee; cursor:pointer; color:#000;
+}
+.search-result-item:hover{background:#e8f0fe}
+.search-result-cover{width:45px;height:21px;object-fit:cover;border:1px solid #ccc;background:#000;}
+.search-result-title{font-size:12px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-result-price{font-size:11px;color:var(--mint);margin-left:auto;font-weight:bold;}
+
+.header-actions{display:flex;align-items:center;gap:10px;margin-left:auto}
+.icon-btn{
+  color: var(--eu-blue);font-size:12px;font-weight:bold;text-decoration:none !important;
+  padding:4px 8px; border:1px solid var(--border); background: var(--surface);
+}
+.icon-btn:hover{background: var(--surf2); color: var(--eu-blue-dark);}
+.btn-signin{
+  background: linear-gradient(to bottom, var(--eu-yellow), var(--eu-yellow-dark)); color: #000; border: 1px solid #cba800;
+  padding:4px 12px;font-size:12px;font-weight:bold; text-decoration:none !important;
+}
+.btn-signin:hover{background: linear-gradient(to bottom, #ffe44d, var(--eu-yellow));}
+
+.page{display:none}
+.page.active{display:block}
+
+.hero{
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+.hero-content{display:flex; gap: 20px;}
+.hero-img{width: 50%; border: 1px solid var(--border); box-shadow: 2px 2px 5px rgba(0,0,0,0.2); background:#000;}
+.hero-info{width: 50%; display:flex; flex-direction:column; justify-content:center;}
+.hero-title{font-size: 22px; font-weight:bold; color: var(--eu-blue); margin-bottom:10px;}
+.hero-tagline{font-size: 13px; color: var(--muted); margin-bottom: 15px;}
+.btn-primary{
+  display:inline-block; background: linear-gradient(to bottom, var(--eu-yellow), var(--eu-yellow-dark));
+  color: #000; border: 1px solid #cba800; padding: 8px 15px; font-size: 14px; font-weight: bold;
+  text-align:center; text-shadow: 1px 1px 0 rgba(255,255,255,0.5); cursor:pointer; text-decoration:none !important;
+}
+.btn-primary:hover{background: linear-gradient(to bottom, #ffe44d, var(--eu-yellow)); text-decoration:none;}
+
+.section{padding:20px 0; border-bottom: 1px dashed var(--border);}
+.section-head{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:15px; border-bottom:2px solid var(--eu-blue); padding-bottom:5px;
+}
+.section-title{font-size:18px;font-weight:bold; color:var(--eu-blue);}
+
+.grid{display:grid;gap:15px; grid-template-columns:repeat(4,1fr);}
+.game-card{
+  border:1px solid var(--border); background:var(--card); padding:5px;
+  box-shadow:1px 1px 3px rgba(0,0,0,0.1); cursor:pointer;
+}
+.game-card:hover{border-color:var(--eu-blue); background:#f9fbfc;}
+.gc-img{width:100%;height:100px;object-fit:cover;border:1px solid #ddd; margin-bottom:5px; background:#000;}
+.gc-title{font-size:12px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; color:var(--eu-blue);}
+.gc-price{margin-top:5px;display:flex;align-items:baseline;justify-content:space-between;}
+.price-current{font-size:14px;font-weight:bold; color:#000;}
+.price-base{font-size:11px;color:var(--muted2);text-decoration:line-through;}
+.badge-discount{background:var(--mint);color:#fff;font-size:10px;font-weight:bold;padding:2px 4px;}
+
+.plat-pill{
+  display:inline-block; border:1px solid var(--border); background:var(--ps-steam);
+  padding:2px 6px;font-size:10px; color:#fff; font-weight:bold;
+}
+
+.store-layout{display:flex; gap:20px; padding:20px 0;}
+.sidebar{width: 220px; background:var(--surface); border:1px solid var(--border); padding:10px;}
+.filter-section{margin-bottom:15px;}
+.filter-label{font-size:11px;font-weight:bold;text-transform:uppercase;color:var(--muted); border-bottom:1px solid #ccc; display:block; margin-bottom:5px;}
+.filter-list span{display:block; font-size:12px; padding:3px 0; color:var(--muted2);}
+.filter-list a{display:block; font-size:12px; padding:3px 0; color:var(--eu-blue); font-weight:bold;}
+
+.game-detail{padding:20px 0;}
+.gd-header{display:flex; gap:20px; margin-bottom:20px; background:var(--surface); padding:15px; border:1px solid var(--border);}
+.gd-cover{width:260px; height:120px; object-fit:cover; border:1px solid #999; box-shadow:2px 2px 5px rgba(0,0,0,0.3); background:#000;}
+.gd-info{flex:1;}
+.gd-title{font-size:24px; font-weight:bold; color:var(--eu-blue); margin-bottom:5px;}
+.price-table{width:100%;border-collapse:collapse; margin-top:20px; border:1px solid var(--border);}
+.price-table th{background:var(--eu-blue); color:#fff; text-align:left; padding:8px; font-size:12px;}
+.price-table td{padding:8px; font-size:13px; border-bottom:1px solid #eee; background:#fff;}
+.price-table tr:hover td{background:#f0f5ff;}
+.buy-btn{background:linear-gradient(to bottom, #fff, #e0e0e0); border:1px solid #999; padding:4px 10px; font-weight:bold; font-size:11px;}
+.buy-btn:hover{background:linear-gradient(to bottom, #e0e0e0, #ccc);}
+
+.classic-table{width:100%; border-collapse:collapse; border:1px solid var(--border); background:#fff; margin-bottom:20px;}
+.classic-table th{background:var(--surface); color:#000; text-align:left; padding:8px; font-size:12px; border-bottom:1px solid var(--border);}
+.classic-table td{padding:8px; font-size:13px; border-bottom:1px solid #eee;}
+
+.auth-page{padding:40px 15px; display:flex; justify-content:center;}
+.auth-card{width:100%;max-width:400px;background:var(--surface);border:1px solid var(--border);padding:20px; box-shadow:2px 2px 5px rgba(0,0,0,0.1);}
+.auth-title{font-size:18px;font-weight:bold;text-align:center;margin-bottom:15px; color:var(--eu-blue); border-bottom:1px solid #ccc; padding-bottom:10px;}
+.social-btn{
+  display:block; text-align:center; width:100%; padding:8px; border:1px solid var(--border);
+  font-size:12px; font-weight:bold; margin-bottom:10px; background:linear-gradient(to bottom, #fff, #eee);
+  color:#000 !important; text-decoration:none !important;
+}
+.social-btn:hover{background:linear-gradient(to bottom, #eee, #ddd);}
+.form-group{margin-bottom:10px;}
+.form-label{display:block;font-size:12px;font-weight:bold;color:var(--muted);margin-bottom:3px;}
+.form-input{width:100%;}
+
+.status-msg{text-align:center; padding:40px; font-size:14px; color:var(--muted); font-weight:bold;}
+
+footer{
+  background: var(--surface); border-top: 4px solid var(--eu-blue);
+  padding: 30px 0; margin-top: auto; font-size:11px; color:var(--muted);
+}
+.footer-grid{display:flex; justify-content:space-between;}
+.eu-flag{display:flex; align-items:center; gap:10px; margin-top:10px; font-weight:bold; color:var(--eu-blue);}
+</style>
+</head>
+<body>
+
+<div id="geo-block">
+  <h1 style="margin-bottom:10px;">Nope. Try Steam.</h1>
+  <p>EuroLoot is inly available in the EU. VPNs don't work.</p>
+</div>
+
+<div id="app">
+<header>
+  <div class="wrap">
+    <div class="header-inner">
+      <a href="#" class="logo" onclick="navigate('home');return false">
+        <img src="images/EuroLoot.png" alt="EuroLoot">
+      </a>
+      <nav id="main-nav">
+        <a href="#" onclick="navigate('store');return false" data-i18n="store">Store</a>
+        <a href="#" onclick="navigate('deals');return false" data-i18n="deals">Deals</a>
+        <a href="#" onclick="navigate('wishlist');return false" data-i18n="wishlist">Wishlist</a>
+      </nav>
+      <div class="header-search">
+        <input type="text" id="header-search" placeholder="Search Steam games..." autocomplete="off" oninput="debounceSearch(this.value)" data-i18n-ph="search">
+        <div class="search-dropdown" id="search-dropdown" style="display:none"></div>
+      </div>
+      <div class="header-actions">
+        <a href="#" class="icon-btn" onclick="navigate('wishlist');return false" title="Wishlist" data-i18n="wishlist">Wishlist</a>
+        <a href="#" class="icon-btn" onclick="navigate('cart');return false" title="Cart"><span data-i18n="cart">Cart</span> (<span id="cart-badge">0</span>)</a>
+        <a href="#" class="btn-signin" onclick="navigate('login');return false" data-i18n="login">Sign in</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div id="page-home" class="page"></div>
+<div id="page-store" class="page"></div>
+<div id="page-deals" class="page"></div>
+<div id="page-wishlist" class="page"></div>
+<div id="page-privacy" class="page"></div>
+<div id="page-terms" class="page"></div>
+<div id="page-cookies" class="page"></div>
+<div id="page-refunds" class="page"></div>
+<div id="page-cart" class="page"></div>
+<div id="page-game" class="page"></div>
+<div id="page-login" class="page"></div>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <strong style="color:var(--eu-blue); font-size:14px;">EuroLoot</strong>
+        <p style="margin-top:5px; max-width:300px;">
+          The newest European game marketplace. Creating new deals in the distribution industry for EU users.
+        </p>
+
+        <div class="eu-flag">
+          <div style="background:#003399; width:30px; height:20px; position:relative; border:1px solid #002266;">
+            <div style="color:#ffd617; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:12px; line-height:1;">*</div>
+          </div>
+          In varietate concordia
+        </div>
+      </div>
+
+      <div>
+        <strong style="color:#000;">Links</strong>
+        <ul style="margin-top:5px;">
+          <li>
+            <a href="#" onclick="navigate('store');return false" data-i18n="store">Store</a>
+          </li>
+          <li>
+            <a href="#" onclick="navigate('deals');return false" data-i18n="deals">Deals</a>
+          </li>
+          <li>
+            <a href="#">Support</a>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <strong style="color:#000;">Legal</strong>
+        <ul style="margin-top:5px;">
+          <li>
+            <a href="#" onclick="navigate('terms');return false">Terms of Service</a>
+          </li>
+          <li>
+            <a href="#" onclick="navigate('privacy');return false">Privacy Policy</a>
+          </li>
+          <li>
+            <a href="#" onclick="navigate('cookies');return false">Cookie Policy</a>
+          </li>
+          <li>
+            <a href="#" onclick="navigate('refunds');return false">Refund Policy</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:10px;">
+      &copy; 2026 EuroLoot. Proudly serving the European Union. A website by Colm Lenehan
+    </div>
+  </div>
+</footer>
+</div>
+
+<script>
+const TRANSLATIONS = {
+  en: { store: "Store", deals: "Deals", wishlist: "Wishlist", cart: "Cart", search: "Search Steam games...", login: "Sign in", addToCart: "Add to Cart", buy: "Buy Now" },
+  de: { store: "Shop", deals: "Angebote", wishlist: "Wunschliste", cart: "Warenkorb", search: "Steam-Spiele suchen...", login: "Anmelden", addToCart: "In den Warenkorb", buy: "Jetzt kaufen" },
+  it: { store: "Negozio", deals: "Offerte", wishlist: "Lista desideri", cart: "Carrello", search: "Cerca giochi Steam...", login: "Accedi", addToCart: "Aggiungi al carrello", buy: "Acquista ora" },
+  fr: { store: "Boutique", deals: "Offres", wishlist: "Liste de souhaits", cart: "Panier", search: "Rechercher des jeux...", login: "Connexion", addToCart: "Ajouter au panier", buy: "Acheter" },
+  es: { store: "Tienda", deals: "Ofertas", wishlist: "Lista de deseos", cart: "Carrito", search: "Buscar juegos...", login: "Iniciar sesión", addToCart: "Añadir al carrito", buy: "Comprar ahora" }
+};
+
+let currentLangObj = TRANSLATIONS['en'];
+
+function initSecurityAndLocale() {
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  if (!tz.startsWith('Europe/')) {
+    document.getElementById('geo-block').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    return false;
+  }
+  
+  document.getElementById('geo-block').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+
+  const langRaw = navigator.language || 'en';
+  const langKey = langRaw.split('-')[0];
+  if (TRANSLATIONS[langKey]) {
+    currentLangObj = TRANSLATIONS[langKey];
+  } else {
+    currentLangObj = TRANSLATIONS['en'];
+  }
+  
+  applyTranslations();
+  return true;
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if(currentLangObj[key]) el.textContent = currentLangObj[key];
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    if(currentLangObj[key]) el.placeholder = currentLangObj[key];
+  });
+}
+
+let CART = [];
+let WISHLIST_IDS = [];
+let FRONT_GAMES = [];
+let ACTIVE_GAME_CACHE = {}; 
+let searchTimeout = null;
+
+
+async function fetchFrontHighlights() {
+  try {
+    const response = await fetch('https://www.cheapshark.com/api/1.0/deals?storeID=1&upperPrice=50&pageSize=12');
+    if (!response.ok) throw new Error('Data endpoint issue');
+    const data = await response.json();
+    
+    FRONT_GAMES = data.map(item => ({
+      id: item.gameID,
+      steamAppID: item.steamAppID,
+      title: item.title,
+      tagline: 'Verified Steam platform entry. Index tracker identification node ' + item.steamAppID,
+      basePrice: parseFloat(item.normalPrice),
+      currentPrice: parseFloat(item.salePrice),
+      discountPercent: Math.round(parseFloat(item.savings)),
+      coverImage: item.thumb,
+      dealID: item.dealID
+    }));
+
+    FRONT_GAMES.forEach(g => { ACTIVE_GAME_CACHE[g.id] = g; });
+    return true;
+  } catch (err) {
+    console.error("Catalog system failed initialization:", err);
+    return false;
+  }
+}
+
+async function fetchTargetGameDetails(gameId) {
+  if (ACTIVE_GAME_CACHE[gameId] && ACTIVE_GAME_CACHE[gameId].tagline !== 'Global catalog listing') {
+    return ACTIVE_GAME_CACHE[gameId];
+  }
+  try {
+    const response = await fetch(`https://www.cheapshark.com/api/1.0/games?id=${gameId}`);
+    if (!response.ok) throw new Error('Query error');
+    const data = await response.json();
+    
+    const steamInfo = data.deals.find(d => d.storeID === "1") || data.deals[0];
+    const base = parseFloat(steamInfo.retailPrice);
+    const current = parseFloat(steamInfo.price);
+    const savings = Math.round(((base - current) / base) * 100);
+
+    const gameObj = {
+      id: gameId,
+      steamAppID: data.info.steamAppID || 'Unknown',
+      title: data.info.title,
+      tagline: 'Global catalog listing retrieved from live central tracking framework nodes.',
+      basePrice: base,
+      currentPrice: current,
+      discountPercent: savings > 0 ? savings : 0,
+      coverImage: data.info.thumb,
+      dealID: steamInfo.dealID
+    };
+
+    ACTIVE_GAME_CACHE[gameId] = gameObj;
+    return gameObj;
+  } catch (err) {
+    console.error("Failed loading target configuration elements:", err);
+    return null;
+  }
+}
+
+const fmt = n => '&euro;' + n.toFixed(2);
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const discTag = pct => pct > 0 ? `<span class="badge-discount">-${pct}%</span>` : '<span></span>';
+
+function gameCard(game){
+  return `
+  <div class="game-card" onclick="navigate('game','${game.id}')">
+    <img class="gc-img" src="${game.coverImage}" alt="${esc(game.title)}" onerror="this.src='https://picsum.photos/seed/${game.id}/260/120'">
+    <div class="gc-title">${esc(game.title)}</div>
+    <div style="margin-top:2px;"><span class="plat-pill">Steam</span></div>
+    <div class="gc-price">
+      ${game.discountPercent > 0 ? discTag(game.discountPercent) : '<span></span>'}
+      <span class="price-current">${fmt(game.currentPrice)}</span>
+    </div>
+  </div>`;
+}
+
+function navigate(page, param=''){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el = document.getElementById(`page-${page}`);
+  if(!el) return;
+  el.classList.add('active');
+  window.scrollTo(0,0);
+  
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  if(page==='store') document.querySelector('nav a[data-i18n="store"]')?.classList.add('active');
+  if(page==='deals') document.querySelector('nav a[data-i18n="deals"]')?.classList.add('active');
+  if(page==='wishlist') document.querySelector('nav a[data-i18n="wishlist"]')?.classList.add('active');
+
+  switch(page){
+    case 'home':      renderHome(); break;
+    case 'store':     renderStore(); break;
+    case 'deals':     renderDeals(); break;
+    case 'wishlist':  renderWishlist(); break;
+    case 'privacy':   renderPrivacy(); break;
+    case 'terms':     renderTerms(); break;
+    case 'cookies':   renderCookies(); break;
+    case 'refunds':   renderRefunds(); break;
+    case 'cart':      renderCart(); break;
+    case 'game':      renderGame(param); break;
+    case 'login':     renderLogin(); break;
+  }
+}
+
+function renderHome(){
+  if(FRONT_GAMES.length === 0) {
+    document.getElementById('page-home').innerHTML = '<div class="status-msg">Loading live European Steam framework catalog indexes...</div>';
+    return;
+  }
+  
+  const featured = FRONT_GAMES[0];
+  const gridGames = FRONT_GAMES.slice(1, 9);
+  
+  document.getElementById('page-home').innerHTML = `
+  <div class="hero">
+    <div class="wrap hero-content">
+      <img src="${featured.coverImage}" class="hero-img" alt="" onerror="this.src='https://picsum.photos/seed/hero/400/200'">
+      <div class="hero-info">
+        <h2 class="hero-title">${esc(featured.title)}</h2>
+        <p class="hero-tagline">${esc(featured.tagline)}</p>
+        <div style="margin-bottom:15px;"><span class="plat-pill">Steam Official Platform Asset</span></div>
+        <div>
+          <span style="font-size:24px; font-weight:bold;">${fmt(featured.currentPrice)}</span>
+          ${featured.discountPercent > 0 ? `<span style="text-decoration:line-through; color:var(--muted); margin-left:10px;">${fmt(featured.basePrice)}</span>` : ''}
+        </div>
+        <button class="btn-primary" style="margin-top:20px; width:150px;" onclick="navigate('game','${featured.id}')">View Details</button>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">Live Steam Catalog Highlights</div>
+      </div>
+      <div class="grid">
+        ${gridGames.map(g=>gameCard(g)).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderStore(){
+  if(FRONT_GAMES.length === 0) {
+    document.getElementById('page-store').innerHTML = '<div class="status-msg">Accessing live tracking endpoints...</div>';
+    return;
+  }
+
+  document.getElementById('page-store').innerHTML = `
+  <div class="wrap store-layout">
+    <aside class="sidebar">
+      <div class="filter-section">
+        <div class="filter-label">Available Platforms</div>
+        <div class="filter-list">
+          <a href="#" onclick="return false">Steam Active Catalog</a>
+          <span style="margin-top:5px; font-weight:normal; font-size:11px;">Epic Games (Unavailable/EU Check Pending)</span>
+          <span style="font-weight:normal; font-size:11px;">PlayStation Network (Unavailable)</span>
+          <span style="font-weight:normal; font-size:11px;">Xbox Live Marketplace (Unavailable)</span>
+          <span style="font-weight:normal; font-size:11px;">Nintendo eShop (Unavailable)</span>
+          <span style="font-weight:normal; font-size:11px;">GOG Galaxy Direct (Unavailable)</span>
+        </div>
+      </div>
+    </aside>
+    <div style="flex:1;">
+      <h2 style="color:var(--eu-blue); border-bottom:2px solid var(--eu-blue); padding-bottom:5px; margin-bottom:15px;">Active Steam Ecosystem</h2>
+      <div class="grid">
+        ${FRONT_GAMES.map(g=>gameCard(g)).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderDeals(){
+  if(FRONT_GAMES.length === 0) {
+    document.getElementById('page-deals').innerHTML = '<div class="status-msg">Processing live discounts...</div>';
+    return;
+  }
+  
+  const deals = FRONT_GAMES.filter(g => g.discountPercent > 0);
+  document.getElementById('page-deals').innerHTML = `
+  <div class="wrap" style="padding:20px 0;">
+    <h2 style="color:var(--hot); border-bottom:2px solid var(--hot); padding-bottom:5px; margin-bottom:15px;">Special Live Promotions</h2>
+    <div class="grid">
+      ${deals.map(g=>gameCard(g)).join('')}
+    </div>
+  </div>`;
+}
+
+async function renderGame(id){
+  document.getElementById('page-game').innerHTML = '<div class="status-msg">Synchronizing specific allocation records...</div>';
+  
+  const game = await fetchTargetGameDetails(id);
+  if(!game) {
+    document.getElementById('page-game').innerHTML = '<div class="status-msg">Target structural item allocation trace error.</div>';
+    return;
+  }
+  const inWish = WISHLIST_IDS.includes(game.id);
+
+  document.getElementById('page-game').innerHTML = `
+  <div class="wrap game-detail">
+    <div class="gd-header">
+      <img src="${game.coverImage}" class="gd-cover" alt="" onerror="this.src='https://picsum.photos/seed/${game.id}/260/120'">
+      <div class="gd-info">
+        <h1 class="gd-title">${esc(game.title)}</h1>
+        <p style="color:var(--muted); margin-bottom:15px;">${esc(game.tagline)}</p>
+        <div style="margin-bottom:15px;"><span class="plat-pill">Steam Platform Node</span></div>
+        <div style="background:#e8f0fe; border:1px solid var(--eu-blue); padding:15px; width:300px;">
+          <div style="font-size:24px; font-weight:bold; color:#000;">${fmt(game.currentPrice)}</div>
+          <div style="margin-top:10px; display:flex; gap:10px;">
+             <button class="btn-primary" onclick="addToCart('${game.id}')">${currentLangObj.addToCart || 'Add to Cart'}</button>
+             <button onclick="toggleWishlist('${game.id}')" style="border:1px solid #999; background:#fff; padding:5px 10px; font-weight:bold;">${inWish?'- Remove Wishlist':'+ Add to Wishlist'}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h2 style="font-size:16px; color:var(--eu-blue); border-bottom:1px solid #ccc; padding-bottom:5px;">Platform Distribution Audits</h2>
+    <table class="price-table">
+      <thead><tr><th>Storefront Node</th><th>Ecosystem Status</th><th>Indexed Price</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Steam Valve Corporation</strong></td>
+          <td><span style="color:var(--mint); font-weight:bold;">Active/Authorized</span></td>
+          <td style="font-weight:bold;">${fmt(game.currentPrice)}</td>
+          <td><button class="buy-btn" onclick="addToCart('${game.id}')">Procure Key</button></td>
+        </tr>
+        <tr style="color:var(--muted2); background:#fafafa;">
+          <td>Epic Games Store</td>
+          <td>Unavailable / Platform Excluded</td>
+          <td>Blocked</td>
+          <td>Locked</td>
+        </tr>
+        <tr style="color:var(--muted2); background:#fafafa;">
+          <td>GOG Digital Distrib.</td>
+          <td>Unavailable / Platform Excluded</td>
+          <td>Blocked</td>
+          <td>Locked</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function renderCart(){
+  const items = CART.map(id => ACTIVE_GAME_CACHE[id]).filter(Boolean);
+  const total = items.reduce((sum, g) => sum + g.currentPrice, 0);
+  
+  document.getElementById('page-cart').innerHTML = `
+  <div class="wrap" style="padding:20px 0;">
+    <h2 style="color:var(--eu-blue); border-bottom:2px solid var(--eu-blue); padding-bottom:5px; margin-bottom:15px;">Shopping Cart</h2>
+    ${items.length === 0 ? '<p>Your cart is empty.</p>' : `
+    <table class="classic-table">
+      <thead><tr><th>Acquisition Target</th><th>Price Matrix Allocation</th><th>Action</th></tr></thead>
+      <tbody>
+        ${items.map(g => `<tr><td><strong>${esc(g.title)}</strong> (Steam App ID reference ID: ${g.steamAppID})</td><td>${fmt(g.currentPrice)}</td><td><button onclick="removeCart('${g.id}')" style="color:var(--hot); text-decoration:underline;">Remove Matrix Allocation</button></td></tr>`).join('')}
+      </tbody>
+    </table>
+    <div style="text-align:right; font-size:18px; margin-bottom:15px;">
+      Subtotal Aggregate: <strong>${fmt(total)}</strong>
+    </div>
+    <div style="text-align:right;">
+      <button class="btn-primary" onclick="alert('Transaction infrastructure initialized for secure processing.')">Proceed to Checkout</button>
+    </div>
+    `}
+  </div>`;
+}
+
+function renderWishlist(){
+  const items = WISHLIST_IDS.map(id => ACTIVE_GAME_CACHE[id]).filter(Boolean);
+
+  document.getElementById('page-wishlist').innerHTML = `
+    <div class="wrap" style="padding:20px 0;">
+      <h2 style="color:var(--eu-blue); border-bottom:2px solid var(--eu-blue); padding-bottom:5px; margin-bottom:15px;">My Wishlist</h2>
+      ${items.length === 0 ? '<p>Your wishlist is currently clear.</p>' : `
+        <div class="grid">
+          ${items.map(g => gameCard(g)).join('')}
+        </div>
+      `}
+    </div>
+  `;
+}
+
+function renderPrivacy(){
+  document.getElementById('page-privacy').innerHTML = `
+    <div class="wrap legal-page">
+      <h1>Privacy Policy</h1>
+      <p class="effective">Effective date: 18 September 2026. Last reviewed: 18 September 2026.</p>
+
+      <div class="legal-box">
+        <strong>Summary:</strong> EuroLoot aims to respect your privacy. We do not sell personal data or use personal data for advertising purposes. The information we collect depends on the features you use and the services required to operate EuroLoot. This policy explains how personal data may be collected, used, stored, and shared.
+      </div>
+
+      <h2>1. Who We Are</h2>
+      <p>EuroLoot is a European gaming retailer and platform currently in development. EuroLoot is designed to help users discover games, hardware, accessories, collectibles, deals, and other gaming-related products.</p>
+
+      <p>EuroLoot may provide purchasing options through its own platform or by directing users to external third-party stores. When a user selects an external purchasing option, the transaction is completed on the relevant third-party platform.</p>
+
+      <p>
+        For privacy enquiries, contact us at:
+        <a href="mailto:euroloot.net@gmail.com">euroloot.net@gmail.com</a>.
+      </p>
+
+      <p>EuroLoot is not affiliated with Valve Corporation, Steam, Epic Games, GOG, itch.io, Nintendo, Sony, Microsoft, Google, Discord, or any other third-party platform referenced on this website unless explicitly stated otherwise.</p>
+
+      <h2>2. Information We May Collect</h2>
+      <p>The information collected depends on the functionality available on EuroLoot and how you use the service.</p>
+
+      <ul>
+        <li><strong>Contact information:</strong> If you contact us by email or another communication method, we may process the information you provide, including your email address and the content of your message.</li>
+
+        <li><strong>Account information:</strong> If account registration is available, we may collect information such as your email address, username, and authentication information necessary to operate your account.</li>
+
+        <li><strong>Technical information:</strong> Our hosting providers or security systems may process technical information such as IP address, browser type, device information, timestamps, and requested pages.</li>
+
+        <li><strong>Website preferences:</strong> Depending on the features implemented, EuroLoot may temporarily process information relating to preferences, shopping selections, or other interactions with the website.</li>
+
+        <li><strong>Purchase information:</strong> If EuroLoot introduces direct purchasing, information necessary to process an order may be collected. Payment information may be processed by a third-party payment provider rather than stored directly by EuroLoot.</li>
+      </ul>
+
+      <p>We do not intentionally request sensitive personal information unless it is necessary for a specific lawful purpose and appropriate safeguards are in place.</p>
+
+      <h2>3. How We Use Information</h2>
+      <p>Personal information may be used for the following purposes:</p>
+
+      <ul>
+        <li>Operating, maintaining, and improving EuroLoot.</li>
+        <li>Responding to enquiries and support requests.</li>
+        <li>Managing accounts, where account functionality is available.</li>
+        <li>Protecting the security and integrity of the website.</li>
+        <li>Detecting, preventing, and investigating misuse or unlawful activity.</li>
+        <li>Processing orders and providing customer support for direct EuroLoot purchases, where applicable.</li>
+        <li>Complying with applicable legal obligations.</li>
+      </ul>
+
+      <h2>4. Third-Party Services and External Stores</h2>
+      <p>EuroLoot may link to or redirect users to external platforms, including Steam and other gaming stores.</p>
+
+      <p>When you visit or use an external platform, that platform may process personal information in accordance with its own privacy policy and terms. EuroLoot does not control the privacy practices of third-party platforms.</p>
+
+      <p>EuroLoot currently supports purchasing routes involving Steam and EuroLoot where those options are available. Other platforms may be introduced in the future. We will update our documentation when additional purchasing integrations become operational.</p>
+
+      <p>EuroLoot may also use third-party infrastructure providers, hosting providers, APIs, content delivery services, authentication providers, or security services. The actual providers used by the website must be reflected in this policy before publication.</p>
+
+      <h2>5. Data Sharing</h2>
+      <p>We do not sell your personal data.</p>
+
+      <p>Personal information may be shared with service providers where necessary to operate EuroLoot, provide requested services, maintain security, process transactions, or comply with legal obligations.</p>
+
+      <p>Where you choose to continue to an external store, the relevant store may process information independently of EuroLoot. You should review that provider's privacy policy before completing a transaction.</p>
+
+      <h2>6. Legal Bases for Processing</h2>
+      <p>Where GDPR applies, EuroLoot will process personal data using an appropriate legal basis, which may include:</p>
+
+      <ul>
+        <li><strong>Contract performance:</strong> Where processing is necessary to provide a service or fulfil an agreement with you.</li>
+
+        <li><strong>Legitimate interests:</strong> Where processing is necessary for purposes such as website security, fraud prevention, or service improvement, provided that your rights and interests are appropriately considered.</li>
+
+        <li><strong>Consent:</strong> Where consent is required and you have freely provided it for a specified purpose.</li>
+
+        <li><strong>Legal obligation:</strong> Where processing is necessary to comply with applicable law.</li>
+      </ul>
+
+      <h2>7. Data Retention</h2>
+      <p>We retain personal information only for as long as reasonably necessary for the purpose for which it was collected, to provide services, resolve disputes, maintain security, or comply with legal obligations.</p>
+
+      <p>Specific retention periods depend on the type of information and the systems used by EuroLoot. We will review retention periods periodically and delete or anonymise information when it is no longer required, unless a longer retention period is legally necessary.</p>
+
+      <h2>8. Your Rights</h2>
+      <p>Depending on the circumstances and applicable law, you may have rights including:</p>
+
+      <ul>
+        <li>Access to personal data we hold about you.</li>
+        <li>Correction of inaccurate or incomplete information.</li>
+        <li>Deletion of personal data in appropriate circumstances.</li>
+        <li>Restriction of processing.</li>
+        <li>Objection to certain processing activities.</li>
+        <li>Data portability where applicable.</li>
+        <li>Withdrawal of consent where processing is based on consent.</li>
+      </ul>
+
+      <p>
+        To make a privacy request, contact:
+        <a href="mailto:euroloot.net@gmail.com">euroloot.net@gmail.com</a>.
+      </p>
+
+      <p>
+        You also have the right to lodge a complaint with the Irish Data Protection Commission:
+        <a href="https://www.dataprotection.ie" target="_blank" rel="noopener noreferrer">dataprotection.ie</a>.
+      </p>
+
+      <h2>9. Security</h2>
+      <p>We aim to use appropriate technical and organisational measures to protect personal information against unauthorised access, loss, misuse, alteration, or disclosure.</p>
+
+      <p>No online service can guarantee absolute security. You should avoid sending sensitive information through unsecured or unnecessary communication channels.</p>
+
+      <h2>10. Children's Privacy</h2>
+      <p>EuroLoot is designed for users in the European Union. Where a feature involves the collection of personal information from children or young people, EuroLoot will apply appropriate safeguards and comply with applicable legal requirements.</p>
+
+      <p>We do not knowingly collect personal information from children where such collection is prohibited by applicable law.</p>
+
+      <h2>11. International Transfers</h2>
+      <p>Some service providers used by EuroLoot may process information outside the European Economic Area. Where applicable, we will take steps to ensure that any international transfer is carried out in accordance with applicable data protection law.</p>
+
+      <h2>12. Changes to This Policy</h2>
+      <p>We may update this Privacy Policy when our services, technology, or legal obligations change. The updated version will be published on this page with a revised effective date.</p>
+
+      <h2>13. Contact</h2>
+      <p>
+        For privacy questions or requests, contact:
+        <a href="mailto:euroloot.net@gmail.com">euroloot.net@gmail.com</a>.
+      </p>
+    </div>
+  `;
+}
+
+function renderTerms(){
+  document.getElementById('page-terms').innerHTML = `
+    <div class="wrap legal-page">
+      <h1>Terms and Conditions</h1>
+      <p class="effective">Effective date: 18 September 2026. Last reviewed: 18 September 2026.</p>
+
+      <div class="legal-box">
+        These Terms and Conditions govern your use of the EuroLoot website and platform. By accessing or using EuroLoot, you agree to comply with these Terms. If you do not agree, you should not use the service.
+      </div>
+
+      <h2>1. About EuroLoot</h2>
+      <p>EuroLoot is a European gaming retailer and platform currently in development. Our services are intended to help users discover games, consoles, gaming hardware, accessories, collectibles, deals, and other gaming-related products.</p>
+
+      <p>EuroLoot may provide purchasing options through its own platform or direct users to external third-party stores. The purchasing route available to you will be identified on the relevant product or checkout interface.</p>
+
+      <p>EuroLoot is not affiliated with Valve Corporation, Steam, Epic Games, GOG, itch.io, Nintendo, Sony, Microsoft, Google, Discord, or any other third-party platform unless explicitly stated otherwise.</p>
+
+      <h2>2. Geographic Scope</h2>
+      <p>EuroLoot is designed with the European Union gaming market at its core. Certain services, products, purchasing options, or features may be restricted by geographic availability, supplier requirements, applicable law, or platform limitations.</p>
+
+      <p>Geographic availability may vary by product, store, payment provider, and delivery destination.</p>
+
+      <h2>3. Eligibility</h2>
+      <p>You may use EuroLoot only where you are legally permitted to do so and are capable of entering into any applicable agreement.</p>
+
+      <p>Where a user is under the applicable age of contractual capacity, a parent or legal guardian may need to supervise or authorise relevant activity. Certain services may have additional age requirements.</p>
+
+      <h2>4. Product and Price Information</h2>
+      <p>EuroLoot may display product descriptions, images, availability information, prices, discounts, and links to purchasing destinations.</p>
+
+      <p>Information may be supplied by EuroLoot, third-party providers, external stores, publishers, distributors, or other sources. Information may change and may contain errors or delays.</p>
+
+      <p>You should confirm the final price, availability, platform, region, system requirements, and applicable terms before completing a purchase.</p>
+
+      <h2>5. External Store Purchases</h2>
+      <p>Where EuroLoot redirects you to an external store, your purchase is completed directly with that store or its relevant seller.</p>
+
+      <p>For example, selecting a Steam purchasing option may redirect you to Steam, where the transaction is completed under Valve Corporation's applicable terms and policies.</p>
+
+      <p>EuroLoot does not control the external store's checkout process, payment processing, fulfilment, refunds, licensing arrangements, or customer support policies.</p>
+
+      <p>You should review the external store's terms and refund policy before completing a purchase.</p>
+
+      <h2>6. Direct EuroLoot Purchases</h2>
+      <p>If EuroLoot offers products for purchase directly through its own platform, the applicable product page, checkout process, order information, and purchasing terms will apply.</p>
+
+      <p>EuroLoot will provide relevant information about the seller, product, price, delivery or access arrangements, and applicable consumer rights where required by law.</p>
+
+      <p>This section applies only to direct EuroLoot purchasing functionality that has been made operational and clearly presented to users.</p>
+
+      <h2>7. Accounts</h2>
+      <p>Where accounts are available, you are responsible for providing accurate information and taking reasonable steps to protect your account credentials.</p>
+
+      <p>You must not share your password, misuse another person's account, or attempt to access accounts or systems without authorisation.</p>
+
+      <p>
+        Contact us at
+        <a href="mailto:euroloot.net@gmail.com">euroloot.net@gmail.com</a>
+        if you believe your account has been compromised.
+      </p>
+
+      <h2>8. Prohibited Conduct</h2>
+      <p>You must not:</p>
+
+      <ul>
+        <li>Use EuroLoot for unlawful purposes.</li>
+        <li>Attempt to gain unauthorised access to the website, accounts, systems, or infrastructure.</li>
+        <li>Interfere with the operation, security, or availability of the service.</li>
+        <li>Scrape, copy, reproduce, or redistribute content without appropriate authorisation.</li>
+        <li>Submit malicious code or harmful content.</li>
+        <li>Misrepresent your identity or affiliation with EuroLoot or another organisation.</li>
+        <li>Use EuroLoot to infringe the rights of others.</li>
+      </ul>
+
+      <h2>9. Intellectual Property</h2>
+      <p>The EuroLoot name, logo, original designs, written content, and other original materials are owned by EuroLoot or used with appropriate permission, unless stated otherwise.</p>
+
+      <p>Third-party names, trademarks, logos, game titles, artwork, screenshots, and product images belong to their respective owners. Their appearance on EuroLoot does not imply endorsement, affiliation, or ownership by EuroLoot.</p>
+
+      <h2>10. Availability and Changes</h2>
+      <p>EuroLoot is currently in development. Features may be added, modified, suspended, or removed as the platform evolves.</p>
+
+      <p>We do not guarantee that the website or any feature will always be available, uninterrupted, secure, or free from errors.</p>
+
+      <h2>11. Disclaimers</h2>
+      <p>To the extent permitted by applicable law, EuroLoot is provided on an “as available” basis. We do not guarantee that all product information, pricing, availability, or external links will always be complete, accurate, or current.</p>
+
+      <p>Nothing in these Terms excludes or limits liability where doing so would be unlawful, including liability that cannot legally be excluded under applicable consumer protection law.</p>
+
+      <h2>12. Consumer Rights</h2>
+      <p>Nothing in these Terms is intended to remove or restrict statutory consumer rights that apply to you under Irish law or applicable European Union law.</p>
+
+      <p>Your rights may depend on whether you purchase directly from EuroLoot or from an external platform. The relevant seller's terms and applicable consumer protection legislation will determine the rights and remedies available to you.</p>
+
+      <h2>13. Governing Law</h2>
+      <p>These Terms are governed by the laws of Ireland, subject to any mandatory consumer protection rights or jurisdictional protections that apply to you under applicable law.</p>
+
+      <h2>14. Changes to These Terms</h2>
+      <p>We may update these Terms to reflect changes to EuroLoot, its services, or applicable legal requirements. Updated Terms will be published on this page with a revised effective date.</p>
+
+      <h2>15. Contact</h2>
+      <p>
+        For questions regarding these Terms, contact:
+        <a href="mailto:euroloot.net@gmail.com">euroloot.net@gmail.com</a>.
+      </p>
+    </div>
+  `;
+}
+
+function renderCookies(){
+  document.getElementById('page-cookies').innerHTML = `
+    <div class="wrap legal-page">
+      <h1>Cookie Policy</h1>
+      <p class="effective">Effective date: 18 September 2026. Last reviewed: 18 September 2026.</p>
+
+      <div class="legal-box">
+        <strong>Summary:</strong> This policy explains how EuroLoot uses cookies and similar technologies. The technologies actually used by the website must be reflected accurately in this policy.
+      </div>
+
+      <h2>1. What Are Cookies?</h2>
+      <p>Cookies are small files or pieces of information stored on, or accessed from, your device when you visit a website. Similar technologies may also be used to maintain sessions, remember preferences, improve security, or perform analytics.</p>
+
+      <h2>2. Cookies Used by EuroLoot</h2>
+      <p>EuroLoot aims to limit the use of cookies and similar technologies to those necessary for operating the website and providing requested functionality.</p>
+
+      <p>The website must be reviewed to determine whether it currently uses:</p>
+
+      <ul>
+        <li>Essential session or authentication cookies.</li>
+        <li>Preference or functionality cookies.</li>
+        <li>Analytics or measurement technologies.</li>
+        <li>Advertising or tracking technologies.</li>
+        <li>Third-party embedded content or services.</li>
+      </ul>
+
+      <p>If non-essential cookies or similar technologies are used, EuroLoot will provide the appropriate information and obtain consent where legally required.</p>
+
+      <h2>3. External Websites</h2>
+      <p>EuroLoot may link to or redirect users to third-party services, including external gaming stores.</p>
+
+      <p>Those services may use their own cookies or similar technologies. Their practices are governed by their own privacy and cookie policies, not this policy.</p>
+
+      <h2>4. Consent and Cookie Controls</h2>
+      <p>Under applicable Irish and European privacy law, consent is generally required for non-essential cookies and similar technologies, subject to applicable exceptions for technologies that are strictly necessary for a service requested by the user.</p>
+
+      <p>Where consent is required, users should be provided with clear information and an appropriate way to accept, reject, or manage the relevant technologies.</p>
+
+      <h2>5. Changes to Cookie Usage</h2>
+      <p>EuroLoot may introduce new features or third-party services that change how cookies or similar technologies are used. This policy will be updated when those changes occur.</p>
+
+      <h2>6. Contact</h2>
+      <p>
+        For questions about this Cookie Policy, contact:
+        <a href="mailto:euroloot.net@gmail.com">euroloot.net@gmail.com</a>.
+      </p>
+    </div>
+  `;
+}
+
+function renderRefunds(){
+  document.getElementById('page-refunds').innerHTML = `
+    <div class="wrap legal-page">
+      <h1>Refund Policy</h1>
+      <p class="effective">Effective date: 18 September 2026. Last reviewed: 18 September 2026.</p>
+
+      <div class="legal-box">
+        This Refund Policy explains how refund enquiries are handled depending on whether a purchase is completed through an external store or directly through EuroLoot.
+      </div>
+
+      <h2>1. External Store Purchases</h2>
+      <p>When you select an external purchasing option on EuroLoot, you may be redirected to a third-party platform to complete the transaction.</p>
+
+      <p>For example, selecting a Steam purchasing option redirects you to Steam, where the purchase is completed under Valve Corporation's applicable terms and refund policy.</p>
+
+      <p>For purchases completed through an external store, refund requests should generally be submitted to the store or seller that processed the transaction.</p>
+
+      <p>EuroLoot does not control the external store's refund decisions, payment systems, fulfilment arrangements, or customer support processes.</p>
+
+      <h2>2. Steam Purchases</h2>
+      <p>For purchases completed through Steam, Valve Corporation's applicable refund policy and purchasing terms apply.</p>
+
+      <p>
+        You can review Steam's refund information at:
+        <a href="https://store.steampowered.com/steam_refunds/" target="_blank" rel="noopener noreferrer">store.steampowered.com/steam_refunds</a>.
+      </p>
+
+      <p>Refund eligibility depends on the purchase, product, applicable policy, and consumer rights that apply to the transaction.</p>
+
+      <h2>3. Direct EuroLoot Purchases</h2>
+      <p>If EuroLoot processes a purchase directly, the refund terms applicable to that product and transaction will be provided through the relevant purchasing process.</p>
+
+      <p>Refunds, cancellations, delivery issues, defective products, and other consumer remedies will be handled in accordance with applicable Irish and European Union law.</p>
+
+      <p>This section applies only to direct EuroLoot transactions that are operational and clearly identified as such.</p>
+
+      <h2>4. Statutory Consumer Rights</h2>
+      <p>Nothing in this policy is intended to exclude or restrict statutory consumer rights.</p>
+
+      <p>Depending on the type of product or service, you may have rights relating to cancellation, defective goods, digital content, delivery, or other consumer remedies. The applicable rights depend on the transaction, seller, product, and relevant law.</p>
+
+      <h2>5. Contact and Support</h2>
+      <p>
+        If you are unsure which platform processed your purchase or need help identifying the appropriate refund process, contact:
+        <a href="mailto:euroloot.net@gmail.com">euroloot.net@gmail.com</a>.
+      </p>
+
+      <p>When contacting us, avoid sending unnecessary payment details, passwords, or other sensitive information.</p>
+
+      <h2>6. Policy Changes</h2>
+      <p>We may update this Refund Policy when EuroLoot introduces new purchasing functionality or when applicable legal requirements change. Updates will be published on this page.</p>
+    </div>
+  `;
+}
+
+function renderLogin(){
+  const REDIRECT_URI = encodeURIComponent("YOUR_CALLBACK_URL_HERE");
+  const GOOGLE_AUTH = `https://accounts.google.com/o/oauth2/v2/auth?client_id=GOOGLE_CLIENT_ID&redirect_uri=${REDIRECT_URI}&response_type=code&scope=email%20profile`;
+  const STEAM_AUTH = `https://steamcommunity.com/openid/login?openid.ns=http://specs.openid.net/auth/2.0&openid.mode=checkid_setup&openid.return_to=${REDIRECT_URI}&openid.realm=https://euroloot.eu`;
+  const DISCORD_AUTH = `https://discord.com/api/oauth2/authorize?client_id=DISCORD_CLIENT_ID&redirect_uri=${REDIRECT_URI}&response_type=code&scope=identify`;
+  const ITCH_AUTH = `https://itch.io/user/oauth?client_id=ITCH_CLIENT_ID&redirect_uri=${REDIRECT_URI}&response_type=token`;
+
+  document.getElementById('page-login').innerHTML = `
+  <div class="wrap auth-page">
+    <div class="auth-card">
+      <div class="auth-title">Sign In / Register</div>
+      <p style="font-size:11px; color:var(--muted); text-align:center; margin-bottom:15px;">Sign in via your preferred European or global network link infrastructure.</p>
+      
+      <a href="${GOOGLE_AUTH}" class="social-btn">Sign in with Google</a>
+      <a href="${STEAM_AUTH}" class="social-btn">Sign in with Steam</a>
+      <a href="${DISCORD_AUTH}" class="social-btn">Sign in with Discord</a>
+      <a href="${ITCH_AUTH}" class="social-btn">Sign in with Itch.io</a>
+      
+      <div style="text-align:center; margin:15px 0; border-bottom:1px solid var(--border); line-height:0.1em;">
+        <span style="background:var(--surface); padding:0 10px; color:var(--muted);">or classic framework token login</span>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input">
+      </div>
+      <button class="btn-primary" style="width:100%; margin-top:10px;" onclick="alert('Local database submission requires active authentication node configuration.')">Login securely</button>
+    </div>
+  </div>`;
+}
+
+function addToCart(gameId){
+  if(!CART.includes(gameId)) CART.push(gameId);
+  document.getElementById('cart-badge').textContent = CART.length;
+  alert("Item pinned to active processing session.");
+}
+
+function removeCart(gameId){
+  CART = CART.filter(id => id !== gameId);
+  document.getElementById('cart-badge').textContent = CART.length;
+  renderCart();
+}
+
+function toggleWishlist(gameId){
+  if(WISHLIST_IDS.includes(gameId)){
+    WISHLIST_IDS = WISHLIST_IDS.filter(id=>id!==gameId);
+    alert("Removed from active processing wishlist.");
+  } else {
+    WISHLIST_IDS.push(gameId);
+    alert("Pinned to active processing wishlist.");
+  }
+  if(document.getElementById('page-game').classList.contains('active')) renderGame(gameId);
+}
+
+function debounceSearch(val) {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    handleLiveSearch(val);
+  }, 350);
+}
+
+async function handleLiveSearch(q){
+  const dd = document.getElementById('search-dropdown');
+  if(!q.trim()){ dd.style.display='none'; return; }
+  
+  dd.innerHTML = '<div style="padding:10px; font-size:11px; text-align:center; color:var(--muted);">Querying global data directories...</div>';
+  dd.style.display = 'block';
+
+  try {
+    const response = await fetch(`https://www.cheapshark.com/api/1.0/games?title=${encodeURIComponent(q)}`);
+    if(!response.ok) throw new Error('API failure');
+    const data = await response.json();
+    
+    const elements = data.slice(0, 8);
+    if(elements.length === 0) {
+      dd.innerHTML = '<div style="padding:10px; font-size:11px; text-align:center; color:var(--hot);">No indexed items discovered.</div>';
+      return;
+    }
+
+    dd.innerHTML = elements.map(item => {
+      if (!ACTIVE_GAME_CACHE[item.gameID]) {
+        ACTIVE_GAME_CACHE[item.gameID] = {
+          id: item.gameID,
+          steamAppID: item.steamAppID || 'Unknown',
+          title: item.external,
+          tagline: 'Global catalog listing',
+          basePrice: parseFloat(item.cheapest) || 0.00,
+          currentPrice: parseFloat(item.cheapest) || 0.00,
+          discountPercent: 0,
+          coverImage: item.thumb
+        };
+      }
+      
+      return `
+      <div class="search-result-item" onclick="clearSearchDropdown(); navigate('game','${item.gameID}');">
+        <img class="search-result-cover" src="${item.thumb}" alt="" onerror="this.src='https://picsum.photos/seed/${item.gameID}/45/21'">
+        <div style="flex:1; min-width:0;">
+          <div class="search-result-title">${esc(item.external)}</div>
+          <span style="font-size:10px; color:var(--muted2);">ID: ${item.steamAppID || 'N/A'}</span>
+        </div>
+        <div class="search-result-price">From ${fmt(parseFloat(item.cheapest))}</div>
+      </div>`;
+    }).join('');
+
+  } catch (err) {
+    dd.innerHTML = '<div style="padding:10px; font-size:11px; text-align:center; color:var(--hot);">Failed retrieving query dataset indexes.</div>';
+  }
+}
+
+function clearSearchDropdown() {
+  document.getElementById('header-search').value = '';
+  document.getElementById('search-dropdown').style.display = 'none';
+}
+
+document.addEventListener('click', e => {
+  const dd = document.getElementById('search-dropdown');
+  if(dd && !dd.contains(e.target) && e.target.id!=='header-search') dd.style.display='none';
+});
+
+if(initSecurityAndLocale()){
+  fetchFrontHighlights().then(success => {
+    navigate('home');
+  });
+}
+</script>
+</body>
+</html>
