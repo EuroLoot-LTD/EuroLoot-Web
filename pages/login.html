@@ -2,151 +2,434 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In | EuroLoot</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="EuroLoot — Sign in or register.">
+<title>EuroLoot | Sign In / Register</title>
+<link rel="icon" href="../images/EuroLootIcon.png">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+:root {
+  --eu-blue: #003399;
+  --eu-blue-dark: #002266;
+  --eu-yellow: #ffd617;
+  --eu-yellow-dark: #e6c014;
+  --bg: #ffffff;
+  --surface: #f0f2f5;
+  --surf2: #e4e7eb;
+  --border: #b0b5ba;
+  --fg: #222222;
+  --muted: #555555;
+  --muted2: #777777;
+  --font-main: Tahoma, Verdana, Arial, sans-serif;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      background: #101218;
-      color: #ffffff;
-      font-family: Arial, sans-serif;
-    }
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    .login-card {
-      width: 100%;
-      max-width: 420px;
-      padding: 36px 28px;
-      text-align: center;
-      background: #1b1e27;
-      border: 1px solid #303542;
-      border-radius: 16px;
-    }
+html { -webkit-text-size-adjust: 100%; }
 
-    .logo {
-      margin: 0 0 10px;
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-main);
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-    .logo span {
-      color: #6ee7a8;
-    }
+a { color: var(--eu-blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button { font-family: inherit; cursor: pointer; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 15px; width: 100%; }
 
-    .subtitle {
-      margin: 0 0 28px;
-      color: #aeb4c2;
-      line-height: 1.5;
-    }
+header {
+  background: #fff;
+  border-bottom: 4px solid var(--eu-blue);
+  color: var(--fg);
+  padding: 12px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
 
-    .google-button {
-      width: 100%;
-      padding: 14px 18px;
-      border: 0;
-      border-radius: 9px;
-      background: #6ee7a8;
-      color: #101218;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
 
-    .google-button:hover {
-      background: #8af0b8;
-    }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo img { height: 38px; width: auto; border: 1px solid #ccc; }
 
-    .google-button:disabled {
-      cursor: wait;
-      opacity: 0.65;
-    }
+nav { display: flex; gap: 5px; margin-left: 15px; }
+nav a {
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--eu-blue);
+  border: 1px solid transparent;
+}
+nav a:hover {
+  color: var(--eu-blue-dark);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  text-decoration: none;
+}
 
-    .message {
-      min-height: 22px;
-      margin-top: 18px;
-      color: #ffb4b4;
-      font-size: 14px;
-      line-height: 1.5;
-      overflow-wrap: anywhere;
-    }
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
 
-    .back-link {
-      display: inline-block;
-      margin-top: 20px;
-      color: #aeb4c2;
-      text-decoration: none;
-      font-size: 14px;
-    }
+.icon-btn {
+  color: var(--eu-blue);
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
 
-    .back-link:hover {
-      color: #ffffff;
-    }
-  </style>
+.btn-signin, .btn-primary {
+  background: linear-gradient(to bottom, var(--eu-yellow), var(--eu-yellow-dark));
+  color: #000;
+  border: 1px solid #cba800;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+}
+
+.btn-signin {
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+main {
+  flex: 1;
+}
+
+.auth-page {
+  padding: 40px 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+}
+
+.auth-title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 15px;
+  color: var(--eu-blue);
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+}
+
+.social-btn {
+  display: block;
+  text-align: center;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  background: linear-gradient(to bottom, #fff, #eee);
+  color: #000 !important;
+  text-decoration: none !important;
+}
+
+.social-btn:hover {
+  background: linear-gradient(to bottom, #eee, #ddd);
+}
+
+.social-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.form-group { margin-bottom: 10px; }
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.form-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  padding: 6px;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 8px 15px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to bottom, #ffe44d, var(--eu-yellow));
+}
+
+#auth-message {
+  color: #cc0000;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 10px;
+  overflow-wrap: anywhere;
+}
+
+footer {
+  background: var(--surface);
+  border-top: 4px solid var(--eu-blue);
+  padding: 30px 0;
+  margin-top: auto;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.footer-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.eu-flag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-weight: bold;
+  color: var(--eu-blue);
+}
+
+@media (max-width: 720px) {
+  .header-inner { flex-wrap: wrap; }
+  nav { margin-left: 0; }
+  .header-actions { margin-left: auto; }
+  .header-search-placeholder { display: none; }
+  .footer-grid { flex-wrap: wrap; }
+}
+
+@media (max-width: 420px) {
+  .header-inner { gap: 8px; }
+  nav a { padding: 5px; }
+  .header-actions { gap: 5px; }
+  .icon-btn { padding: 4px; }
+}
+</style>
 </head>
 
 <body>
-  <main class="login-card">
-    <h1 class="logo">Euro<span>Loot</span></h1>
-    <p class="subtitle">Sign in or create your EuroLoot account.</p>
 
-    <button
-      id="google-button"
-      class="google-button"
-      type="button"
-    >
-      Continue with Google
-    </button>
+<header>
+  <div class="wrap">
+    <div class="header-inner">
+      <a href="../index.html" class="logo">
+        <img src="../images/EuroLoot.png" alt="EuroLoot">
+      </a>
 
-    <p id="message" class="message" role="status"></p>
+      <nav>
+        <a href="../index.html">Store</a>
+        <a href="../index.html">Deals</a>
+        <a href="../index.html">Wishlist</a>
+      </nav>
 
-    <a class="back-link" href="../index.html">
-      ← Back to EuroLoot
-    </a>
-  </main>
+      <div class="header-actions">
+        <a href="../index.html" class="icon-btn">Wishlist</a>
+        <a href="../index.html" class="icon-btn">Cart (0)</a>
+        <a href="login.html" class="btn-signin">Sign in</a>
+      </div>
+    </div>
+  </div>
+</header>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const supabaseClient = window.supabase.createClient(
-      'https://gepavrbxsdjmmtvwwtdc.supabase.co',
-      'sb_publishable_zJNUK33LL5YQOu0mKDBY0g_FglwQg6N'
-    );
+<main>
+  <div class="wrap auth-page">
+    <div class="auth-card">
+      <div class="auth-title">Sign In / Register</div>
 
-    const button = document.getElementById('google-button');
-    const message = document.getElementById('message');
+      <p style="font-size:11px; color:var(--muted); text-align:center; margin-bottom:15px;">
+        Sign in via your preferred European or global network link infrastructure.
+      </p>
 
-    button.addEventListener('click', async () => {
-      button.disabled = true;
-      message.textContent = 'Connecting to Google…';
+      <button type="button" class="social-btn" id="google-button">
+        Sign in with Google
+      </button>
 
-      try {
-        const { error } =
-          await supabaseClient.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-              redirectTo:
-                'https://euroloot-ltd.github.io/EuroLoot-Web/'
-            }
-          });
+      <a href="#" class="social-btn" id="steam-button">
+        Sign in with Steam
+      </a>
 
-        if (error) {
-          throw error;
-        }
-      } catch (error) {
-        message.textContent =
-          'Sign-in failed: ' + error.message;
-        button.disabled = false;
+      <a href="#" class="social-btn" id="discord-button">
+        Sign in with Discord
+      </a>
+
+      <a href="#" class="social-btn" id="itch-button">
+        Sign in with Itch.io
+      </a>
+
+      <div style="text-align:center; margin:15px 0; border-bottom:1px solid var(--border); line-height:0.1em;">
+        <span style="background:var(--surface); padding:0 10px; color:var(--muted);">
+          or classic framework token login
+        </span>
+      </div>
+
+      <form id="email-login-form">
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input id="email" type="email" class="form-input" autocomplete="email" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input id="password" type="password" class="form-input" autocomplete="current-password" required>
+        </div>
+
+        <button type="submit" class="btn-primary">
+          Login securely
+        </button>
+      </form>
+
+      <p id="auth-message" role="status"></p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <strong style="color:var(--eu-blue); font-size:14px;">EuroLoot</strong>
+        <p style="margin-top:5px; max-width:300px;">
+          The newest European game marketplace. Creating new deals in the distribution industry for EU users.
+        </p>
+
+        <div class="eu-flag">
+          <div style="background:#003399; width:30px; height:20px; position:relative; border:1px solid #002266;">
+            <div style="color:#ffd617; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:12px; line-height:1;">*</div>
+          </div>
+          In varietate concordia
+        </div>
+      </div>
+
+      <div>
+        <strong style="color:#000;">Links</strong>
+        <ul style="margin-top:5px;">
+          <li><a href="../index.html">Store</a></li>
+          <li><a href="../index.html">Deals</a></li>
+          <li><a href="mailto:euroloot.net@gmail.com">Support</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <strong style="color:#000;">Legal</strong>
+        <ul style="margin-top:5px;">
+          <li><a href="../index.html">Terms of Service</a></li>
+          <li><a href="../index.html">Privacy Policy</a></li>
+          <li><a href="../index.html">Cookie Policy</a></li>
+          <li><a href="../index.html">Refund Policy</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:10px;">
+      &copy; 2026 EuroLoot. Proudly serving the European Union. A website by Colm Lenehan
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const message = document.getElementById('auth-message');
+const googleButton = document.getElementById('google-button');
+
+let supabaseClient = null;
+
+try {
+  if (!window.supabase) {
+    throw new Error('The Supabase library did not load. Please refresh the page.');
+  }
+
+  supabaseClient = window.supabase.createClient(
+    'https://gepavrbxsdjmmtvwwtdc.supabase.co',
+    'sb_publishable_zJNUK33LL5YQOu0mKDBY0g_FglwQg6N'
+  );
+} catch (error) {
+  message.textContent = error.message;
+}
+
+googleButton.addEventListener('click', async () => {
+  if (!supabaseClient) {
+    message.textContent = 'Authentication could not initialise.';
+    return;
+  }
+
+  googleButton.disabled = true;
+  googleButton.textContent = 'Connecting to Google…';
+  message.textContent = '';
+
+  try {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'https://euroloot-ltd.github.io/EuroLoot-Web/'
       }
     });
-  </script>
+
+    if (error) throw error;
+  } catch (error) {
+    message.textContent = 'Google sign-in failed: ' + error.message;
+    googleButton.disabled = false;
+    googleButton.textContent = 'Sign in with Google';
+  }
+});
+
+document.getElementById('email-login-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  message.textContent =
+    'Email and password sign-in has not been connected yet.';
+
+  // This form does not create accounts or sign users in until
+  // email/password authentication is configured in Supabase.
+});
+
+document.getElementById('steam-button').addEventListener('click', event => {
+  event.preventDefault();
+  message.textContent = 'Steam sign-in has not been configured yet.';
+});
+
+document.getElementById('discord-button').addEventListener('click', event => {
+  event.preventDefault();
+  message.textContent = 'Discord sign-in has not been configured yet.';
+});
+
+document.getElementById('itch-button').addEventListener('click', event => {
+  event.preventDefault();
+  message.textContent = 'Itch.io sign-in has not been configured yet.';
+});
+</script>
+
 </body>
 </html>
