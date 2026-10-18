@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Your Profile | EuroLoot</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: #10131b;
+      color: #f5f7fa;
+      font-family: Arial, sans-serif;
+    }
+
+    .panel {
+      width: 100%;
+      max-width: 440px;
+      padding: 32px;
+      background: #1b202b;
+      border: 1px solid #303747;
+      border-radius: 16px;
+    }
+
+    h1 { margin-top: 0; font-size: 27px; }
+    p { color: #b9c1d0; line-height: 1.5; }
+
+    label {
+      display: block;
+      margin: 20px 0 8px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #414b5e;
+      border-radius: 8px;
+      background: #10131b;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 24px;
+      padding: 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #b9f36a;
+      color: #10131b;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled { opacity: 0.6; cursor: wait; }
+    #status { margin-top: 18px; overflow-wrap: anywhere; }
+    .error { color: #ff9292; }
+    .success { color: #b9f36a; }
+    .small { font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <h1>Welcome to EuroLoot!</h1>
+    <p>Choose your username to finish setting up your account.</p>
+
+    <p id="status" role="status" aria-live="polite">
+      Checking your sign-in...
+    </p>
+
+    <form id="profile-form" hidden>
+      <label for="username">Username</label>
+      <input
+        id="username"
+        name="username"
+        type="text"
+        minlength="3"
+        maxlength="20"
+        pattern="[A-Za-z0-9_]+"
+        autocomplete="username"
+        placeholder="e.g. EuroGamer123"
+        required
+      >
+      <p class="small">3–20 characters. Use letters, numbers or underscores.</p>
+
+      <label for="display-name">Display name (optional)</label>
+      <input
+        id="display-name"
+        name="display_name"
+        type="text"
+        maxlength="60"
+        autocomplete="nickname"
+        placeholder="How should we display your name?"
+      >
+
+      <button id="submit-button" type="submit">
+        Complete sign-up
+      </button>
+    </form>
+
+    <p><a href="../index.html" style="color:#b9f36a">Back to EuroLoot</a></p>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://gepavrbxsdjmmtvwwtdc.supabase.co';
+    const SUPABASE_PUBLIC_KEY = 'PASTE_YOUR_PUBLIC_KEY_HERE';
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLIC_KEY
+    );
+
+    const statusEl = document.getElementById('status');
+    const form = document.getElementById('profile-form');
+    const usernameInput = document.getElementById('username');
+    const displayNameInput = document.getElementById('display-name');
+    const submitButton = document.getElementById('submit-button');
+
+    let currentUser = null;
+
+    function showStatus(message, type = '') {
+      statusEl.textContent = message;
+      statusEl.className = type;
+    }
+
+    async function initialise() {
+      try {
+        if (SUPABASE_PUBLIC_KEY === ''sb_publishable_zJNUK33LL5YQOu0mKDBY0g_FglwQg6') {
+          throw new Error('Add your Supabase public key to this page first.');
+        }
+
+        // Let Supabase process the OAuth callback and restore the session.
+        const { data: sessionData, error: sessionError } =
+          await supabaseClient.auth.getSession();
+
+        if (sessionError) throw sessionError;
+
+        // Remove OAuth tokens from the address bar after session processing.
+        if (window.location.hash) {
+          window.history.replaceState(
+            null,
+            document.title,
+            window.location.pathname + window.location.search
+          );
+        }
+
+        if (!sessionData.session) {
+          window.location.replace('login.html');
+          return;
+        }
+
+        // Verify the signed-in user with Supabase.
+        const { data: userData, error: userError } =
+          await supabaseClient.auth.getUser();
+
+        if (userError || !userData.user) {
+          await supabaseClient.auth.signOut();
+          window.location.replace('login.html');
+          return;
+        }
+
+        currentUser = userData.user;
+
+        const { data: profile, error: profileError } =
+          await supabaseClient
+            .from('profiles')
+            .select('id, username, display_name')
+            .eq('id', currentUser.id)
+            .maybeSingle();
+
+        if (profileError) throw profileError;
+
+        // A non-empty username means the profile is already complete.
+        if (profile && profile.username && profile.username.trim()) {
+          window.location.replace('../index.html');
+          return;
+        }
+
+        if (profile?.display_name) {
+          displayNameInput.value = profile.display_name;
+        }
+
+        form.hidden = false;
+        showStatus('You are signed in. Choose your username.');
+      } catch (error) {
+        console.error('Profile setup error:', error);
+        showStatus(
+          error.message || 'Could not load your profile. Please try again.',
+          'error'
+        );
+      }
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!currentUser) {
+        showStatus('Your sign-in has expired. Please sign in again.', 'error');
+        return;
+      }
+
+      const username = usernameInput.value.trim();
+      const displayName = displayNameInput.value.trim();
+
+      if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) {
+        showStatus(
+          'Username must be 3–20 characters using letters, numbers or underscores.',
+          'error'
+        );
+        return;
+      }
+
+      if (displayName.length > 60) {
+        showStatus('Display name must be 60 characters or fewer.', 'error');
+        return;
+      }
+
+      submitButton.disabled = true;
+      showStatus('Saving your profile...');
+
+      try {
+        const { error } = await supabaseClient
+          .from('profiles')
+          .upsert({
+            id: currentUser.id,
+            username: username,
+            display_name: displayName || null,
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'id'
+          });
+
+        if (error) {
+          if (error.code === '23505') {
+            throw new Error(
+              'That username is already taken. Please choose another.'
+            );
+          }
+          throw error;
+        }
+
+        showStatus('Profile saved! Redirecting...', 'success');
+        window.location.replace('../index.html');
+      } catch (error) {
+        console.error('Profile save error:', error);
+        showStatus(
+          error.message || 'Could not save your profile. Please try again.',
+          'error'
+        );
+        submitButton.disabled = false;
+      }
+    });
+
+    initialise();
+  </script>
+</body>
+</html>
