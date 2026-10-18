@@ -200,7 +200,7 @@ footer{
 
 <div id="geo-block">
   <h1 style="margin-bottom:10px;">Nope. Try Steam.</h1>
-  <p>EuroLoot is inly available in the EU. VPNs don't work.</p>
+  <p>EuroLoot is only available in the EU. VPNs don't work.</p>
 </div>
 
 <div id="app">
@@ -222,7 +222,7 @@ footer{
       <div class="header-actions">
         <a href="#" class="icon-btn" onclick="navigate('wishlist');return false" title="Wishlist" data-i18n="wishlist">Wishlist</a>
         <a href="#" class="icon-btn" onclick="navigate('cart');return false" title="Cart"><span data-i18n="cart">Cart</span> (<span id="cart-badge">0</span>)</a>
-        <a href="pages/login.html" class="btn-signin" data-i18n="login">Sign in</a>
+        <a href="#" class="btn-signin" onclick="navigate('login');return false" data-i18n="login">Sign in</a>
       </div>
     </div>
   </div>
@@ -275,18 +275,10 @@ footer{
       <div>
         <strong style="color:#000;">Legal</strong>
         <ul style="margin-top:5px;">
-          <li>
-            <a href="#" onclick="navigate('terms');return false">Terms of Service</a>
-          </li>
-          <li>
-            <a href="#" onclick="navigate('privacy');return false">Privacy Policy</a>
-          </li>
-          <li>
-            <a href="#" onclick="navigate('cookies');return false">Cookie Policy</a>
-          </li>
-          <li>
-            <a href="#" onclick="navigate('refunds');return false">Refund Policy</a>
-          </li>
+          <li><a href="pages/terms-of-service.html">Terms of Service</a></li>
+          <li><a href="pages/privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="pages/cookie-policy.html">Cookie Policy</a></li>
+          <li><a href="pages/refund-policy.html">Refund Policy</a></li>
         </ul>
       </div>
     </div>
@@ -299,6 +291,8 @@ footer{
 </div>
 
 <script>
+const REDIRECT_URI = 'https://euroloot-ltd.github.io/EuroLoot-Web/';
+
 const TRANSLATIONS = {
   en: { store: "Store", deals: "Deals", wishlist: "Wishlist", cart: "Cart", search: "Search Steam games...", login: "Sign in", addToCart: "Add to Cart", buy: "Buy Now" },
   de: { store: "Shop", deals: "Angebote", wishlist: "Wunschliste", cart: "Warenkorb", search: "Steam-Spiele suchen...", login: "Anmelden", addToCart: "In den Warenkorb", buy: "Jetzt kaufen" },
