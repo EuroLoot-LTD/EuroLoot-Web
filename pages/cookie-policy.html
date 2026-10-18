@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EuroLoot Cookie Policy — Learn how cookies and similar technologies may be used on EuroLoot.">
+  <title>EuroLoot | Cookie Policy</title>
+  <link rel="icon" href="../images/EuroLootIcon.png">
+  <style>
+    :root {
+      --eu-blue: #003399;
+      --eu-blue-dark: #002266;
+      --eu-yellow: #ffd617;
+      --eu-yellow-dark: #e6c014;
+      --bg: #ffffff;
+      --surface: #f0f2f5;
+      --surf2: #e4e7eb;
+      --card: #ffffff;
+      --border: #b0b5ba;
+      --fg: #222222;
+      --muted: #555555;
+      --muted2: #777777;
+      --mint: #006600;
+      --hot: #cc0000;
+      --font-main: Tahoma, Verdana, Arial, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-main);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: var(--eu-blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { padding-left: 22px; list-style: disc; }
+    li { margin-bottom: 7px; }
+
+    :focus-visible { outline: 1px dotted var(--eu-blue); }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 15px;
+      width: 100%;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 4px solid var(--eu-blue);
+      color: var(--fg);
+      padding: 12px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none !important;
+    }
+
+    .logo img { height: 38px; border: 1px solid #ccc; }
+
+    nav { display: flex; gap: 5px; }
+
+    nav a {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--eu-blue);
+      text-decoration: none !important;
+      border: 1px solid transparent;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--eu-blue-dark);
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    .icon-btn {
+      color: var(--eu-blue);
+      font-size: 12px;
+      font-weight: bold;
+      text-decoration: none !important;
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .icon-btn:hover { background: var(--surf2); color: var(--eu-blue-dark); }
+
+    .btn-signin {
+      background: linear-gradient(to bottom, var(--eu-yellow), var(--eu-yellow-dark));
+      color: #000;
+      border: 1px solid #cba800;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      text-decoration: none !important;
+    }
+
+    .btn-signin:hover {
+      background: linear-gradient(to bottom, #ffe44d, var(--eu-yellow));
+    }
+
+    main { flex: 1; }
+
+    .legal-page { padding-top: 30px; padding-bottom: 40px; }
+
+    .legal-page h1 {
+      font-size: 25px;
+      color: var(--eu-blue);
+      border-bottom: 3px solid var(--eu-blue);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+
+    .effective {
+      font-size: 11px;
+      color: var(--muted2);
+      margin-bottom: 20px;
+    }
+
+    .legal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--eu-blue);
+      padding: 15px;
+      margin-bottom: 25px;
+    }
+
+    .legal-page h2 {
+      color: var(--eu-blue);
+      font-size: 16px;
+      margin-top: 25px;
+      margin-bottom: 9px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 5px;
+    }
+
+    .legal-page p { margin-bottom: 12px; }
+    .legal-page ul { margin: 10px 0 16px; }
+
+    footer {
+      background: var(--surface);
+      border-top: 4px solid var(--eu-blue);
+      padding: 25px 0;
+      margin-top: auto;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
+
+    .footer-grid strong { color: #000; font-size: 12px; }
+    .footer-grid ul { list-style: none; padding: 0; margin-top: 5px; }
+    .footer-grid li { margin-bottom: 4px; }
+
+    .eu-flag {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      font-weight: bold;
+      color: var(--eu-blue);
+    }
+
+    @media (max-width: 650px) {
+      .header-inner { align-items: flex-start; }
+      nav { order: 3; width: 100%; flex-wrap: wrap; margin-left: 0; }
+      .header-actions { margin-left: auto; }
+      .legal-page h1 { font-size: 22px; }
+      .footer-grid { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="header-inner">
+        <a href="../index.html" class="logo" aria-label="EuroLoot home">
+          <img src="../images/EuroLoot.png" alt="EuroLoot">
+        </a>
+
+        <nav aria-label="Main navigation">
+          <a href="../index.html">Store</a>
+          <a href="../index.html">Deals</a>
+          <a href="../index.html">Wishlist</a>
+        </nav>
+
+        <div class="header-actions">
+          <a href="../index.html" class="icon-btn">Home</a>
+          <a href="login.html" class="btn-signin">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap legal-page">
+      <h1>Cookie Policy</h1>
+      <p class="effective">Effective date: 18 September 2026. Last reviewed: 18 September 2026.</p>
+
+      <div class="legal-box">
+        <strong>Summary:</strong> This policy explains how EuroLoot uses cookies and similar technologies. The technologies actually used by the website must be reflected accurately in this policy.
+      </div>
+
+      <h2>1. What Are Cookies?</h2>
+      <p>Cookies are small files or pieces of information stored on, or accessed from, your device when you visit a website. Similar technologies may also be used to maintain sessions, remember preferences, improve security, or perform analytics.</p>
+
+      <h2>2. Cookies Used by EuroLoot</h2>
+      <p>EuroLoot aims to limit the use of cookies and similar technologies to those necessary for operating the website and providing requested functionality.</p>
+
+      <p>The website must be reviewed to determine whether it currently uses:</p>
+
+      <ul>
+        <li>Essential session or authentication cookies.</li>
+        <li>Preference or functionality cookies.</li>
+        <li>Analytics or measurement technologies.</li>
+        <li>Advertising or tracking technologies.</li>
+        <li>Third-party embedded content or services.</li>
+      </ul>
+
+      <p>If non-essential cookies or similar technologies are used, EuroLoot will provide the appropriate information and obtain consent where legally required.</p>
+
+      <h2>3. External Websites</h2>
+      <p>EuroLoot may link to or redirect users to third-party services, including external gaming stores.</p>
+
+      <p>Those services may use their own cookies or similar technologies. Their practices are governed by their own privacy and cookie policies, not this policy.</p>
+
+      <h2>4. Consent and Cookie Controls</h2>
+      <p>Under applicable Irish and European privacy law, consent is generally required for non-essential cookies and similar technologies, subject to applicable exceptions for technologies that are strictly necessary for a service requested by the user.</p>
+
+      <p>Where consent is required, users should be provided with clear information and an appropriate way to accept, reject, or manage the relevant technologies.</p>
+
+      <h2>5. Changes to Cookie Usage</h2>
+      <p>EuroLoot may introduce new features or third-party services that change how cookies or similar technologies are used. This policy will be updated when those changes occur.</p>
+
+      <h2>6. Contact</h2>
+      <p>For questions about this Cookie Policy, contact:
+        <a href="mailto:euroloot.net@gmail.com">euroloot.net@gmail.com</a>.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="footer-grid">
+        <div>
+          <strong style="color:var(--eu-blue);font-size:14px;">EuroLoot</strong>
+          <p style="margin-top:5px;max-width:300px;">
+            The newest European game marketplace. Creating new deals in the distribution industry for EU users.
+          </p>
+          <div class="eu-flag">
+            <div style="background:#003399;width:30px;height:20px;position:relative;border:1px solid #002266;">
+              <div style="color:#ffd617;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;line-height:1;">*</div>
+            </div>
+            In varietate concordia
+          </div>
+        </div>
+
+        <div>
+          <strong>Links</strong>
+          <ul>
+            <li><a href="../index.html">Store</a></li>
+            <li><a href="../index.html">Deals</a></li>
+            <li><a href="mailto:euroloot.net@gmail.com">Support</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <strong>Legal</strong>
+          <ul>
+            <li><a href="terms-of-service.html">Terms of Service</a></li>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="cookie-policy.html" aria-current="page">Cookie Policy</a></li>
+            <li><a href="refund-policy.html">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:10px;">
+        &copy; 2026 EuroLoot. Proudly serving the European Union. A website by Colm Lenehan
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
