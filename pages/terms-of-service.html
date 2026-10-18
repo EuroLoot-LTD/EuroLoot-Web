@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EuroLoot Terms and Conditions.">
+  <title>EuroLoot | Terms of Service</title>
+  <link rel="icon" href="images/EuroLootIcon.png">
+
+  <style>
+    :root {
+      --eu-blue: #003399;
+      --eu-blue-dark: #002266;
+      --eu-yellow: #ffd617;
+      --eu-yellow-dark: #e6c014;
+      --bg: #ffffff;
+      --surface: #f0f2f5;
+      --border: #b0b5ba;
+      --fg: #222222;
+      --muted: #555555;
+      --font-main: Tahoma, Verdana, Arial, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-main);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      color: var(--eu-blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 15px;
+      width: 100%;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 4px solid var(--eu-blue);
+      color: var(--fg);
+      padding: 12px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      display: block;
+      height: 38px;
+      width: auto;
+      border: 1px solid #ccc;
+    }
+
+    nav {
+      display: flex;
+      gap: 5px;
+      margin-left: 15px;
+    }
+
+    nav a {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--eu-blue);
+      border: 1px solid transparent;
+    }
+
+    nav a:hover {
+      color: var(--eu-blue-dark);
+      background: var(--surface);
+      border-color: var(--border);
+      text-decoration: none;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    .icon-btn {
+      color: var(--eu-blue);
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      white-space: nowrap;
+    }
+
+    .btn-signin {
+      background: linear-gradient(to bottom, var(--eu-yellow), var(--eu-yellow-dark));
+      color: #000;
+      border: 1px solid #cba800;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    main {
+      flex: 1;
+      padding: 28px 0 40px;
+    }
+
+    .legal-page h1 {
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--eu-blue);
+      border-bottom: 2px solid var(--eu-blue);
+      padding-bottom: 5px;
+      margin-bottom: 8px;
+    }
+
+    .legal-page .effective {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 15px;
+    }
+
+    .legal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 12px;
+      margin-bottom: 20px;
+    }
+
+    .legal-page h2 {
+      font-size: 15px;
+      font-weight: bold;
+      color: var(--eu-blue);
+      margin: 20px 0 7px;
+    }
+
+    .legal-page p {
+      margin-bottom: 12px;
+    }
+
+    .legal-page ul {
+      list-style: disc;
+      margin: 0 0 14px 24px;
+    }
+
+    .legal-page li {
+      margin: 4px 0;
+    }
+
+    footer {
+      background: var(--surface);
+      border-top: 4px solid var(--eu-blue);
+      padding: 30px 0;
+      margin-top: auto;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 25px;
+    }
+
+    .footer-grid ul {
+      list-style: none;
+      margin-top: 5px;
+    }
+
+    .footer-grid li {
+      margin-bottom: 2px;
+    }
+
+    .eu-flag {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      font-weight: bold;
+      color: var(--eu-blue);
+    }
+
+    @media (max-width: 720px) {
+      .header-inner {
+        flex-wrap: wrap;
+      }
+
+      nav {
+        margin-left: 0;
+      }
+
+      .header-actions {
+        margin-left: auto;
+        gap: 5px;
+      }
+
+      .footer-grid {
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .header-inner {
+        gap: 8px;
+      }
+
+      nav a {
+        padding: 5px 8px;
+      }
+
+      .icon-btn {
+        padding: 4px 6px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap">
+      <div class="header-inner">
+        <a href="index.html" class="logo" aria-label="EuroLoot home">
+          <img src="images/EuroLoot.png" alt="EuroLoot">
+        </a>
+
+        <nav aria-label="Main navigation">
+          <a href="index.html">Store</a>
+          <a href="index.html">Deals</a>
+          <a href="index.html">Wishlist</a>
+        </nav>
+
+        <div class="header-actions">
+          <a href="index.html" class="icon-btn">Wishlist</a>
+          <a href="index.html" class="icon-btn">Cart (0)</a>
+          <a href="pages/login.html" class="btn-signin">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap legal-page">
+      <h1>Terms and Conditions</h1>
+      <p class="effective">Effective date: 18 September 2026. Last reviewed: 18 September 2026.</p>
+
+      <div class="legal-box">
+        These Terms and Conditions govern your use of the EuroLoot website and platform. By accessing or using EuroLoot, you agree to comply with these Terms. If you do not agree, you should not use the service.
+      </div>
+
+      <h2>1. About EuroLoot</h2>
+      <p>EuroLoot is a European gaming retailer and platform currently in development. Our services are intended to help users discover games, consoles, gaming hardware, accessories, collectibles, deals, and other gaming-related products.</p>
+
+      <p>EuroLoot may provide purchasing options through its own platform or direct users to external third-party stores. The purchasing route available to you will be identified on the relevant product or checkout interface.</p>
+
+      <p>EuroLoot is not affiliated with Valve Corporation, Steam, Epic Games, GOG, itch.io, Nintendo, Sony, Microsoft, Google, Discord, or any other third-party platform unless explicitly stated otherwise.</p>
+
+      <h2>2. Geographic Scope</h2>
+      <p>EuroLoot is designed with the European Union gaming market at its core. Certain services, products, purchasing options, or features may be restricted by geographic availability, supplier requirements, applicable law, or platform limitations.</p>
+
+      <p>Geographic availability may vary by product, store, payment provider, and delivery destination.</p>
+
+      <h2>3. Eligibility</h2>
+      <p>You may use EuroLoot only where you are legally permitted to do so and are capable of entering into any applicable agreement.</p>
+
+      <p>Where a user is under the applicable age of contractual capacity, a parent or legal guardian may need to supervise or authorise relevant activity. Certain services may have additional age requirements.</p>
+
+      <h2>4. Product and Price Information</h2>
+      <p>EuroLoot may display product descriptions, images, availability information, prices, discounts, and links to purchasing destinations.</p>
+
+      <p>Information may be supplied by EuroLoot, third-party providers, external stores, publishers, distributors, or other sources. Information may change and may contain errors or delays.</p>
+
+      <p>You should confirm the final price, availability, platform, region, system requirements, and applicable terms before completing a purchase.</p>
+
+      <h2>5. External Store Purchases</h2>
+      <p>Where EuroLoot redirects you to an external store, your purchase is completed directly with that store or its relevant seller.</p>
+
+      <p>For example, selecting a Steam purchasing option may redirect you to Steam, where the transaction is completed under Valve Corporation's applicable terms and policies.</p>
+
+      <p>EuroLoot does not control the external store's checkout process, payment processing, fulfilment, refunds, licensing arrangements, or customer support policies.</p>
+
+      <p>You should review the external store's terms and refund policy before completing a purchase.</p>
+
+      <h2>6. Direct EuroLoot Purchases</h2>
+      <p>If EuroLoot offers products for purchase directly through its own platform, the applicable product page, checkout process, order information, and purchasing terms will apply.</p>
+
+      <p>EuroLoot will provide relevant information about the seller, product, price, delivery or access arrangements, and applicable consumer rights where required by law.</p>
+
+      <p>This section applies only to direct EuroLoot purchasing functionality that has been made operational and clearly presented to users.</p>
+
+      <h2>7. Accounts</h2>
+      <p>Where accounts are available, you are responsible for providing accurate information and taking reasonable steps to protect your account credentials.</p>
+
+      <p>You must not share your password, misuse another person's account, or attempt to access accounts or systems without authorisation.</p>
+
+      <p>
+        Contact us at
+        <a href="mailto:euroloot.net@gmail.com">euroloot.net@gmail.com</a>
+        if you believe your account has been compromised.
+      </p>
+
+      <h2>8. Prohibited Conduct</h2>
+      <p>You must not:</p>
+
+      <ul>
+        <li>Use EuroLoot for unlawful purposes.</li>
+        <li>Attempt to gain unauthorised access to the website, accounts, systems, or infrastructure.</li>
+        <li>Interfere with the operation, security, or availability of the service.</li>
+        <li>Scrape, copy, reproduce, or redistribute content without appropriate authorisation.</li>
+        <li>Submit malicious code or harmful content.</li>
+        <li>Misrepresent your identity or affiliation with EuroLoot or another organisation.</li>
+        <li>Use EuroLoot to infringe the rights of others.</li>
+      </ul>
+
+      <h2>9. Intellectual Property</h2>
+      <p>The EuroLoot name, logo, original designs, written content, and other original materials are owned by EuroLoot or used with appropriate permission, unless stated otherwise.</p>
+
+      <p>Third-party names, trademarks, logos, game titles, artwork, screenshots, and product images belong to their respective owners. Their appearance on EuroLoot does not imply endorsement, affiliation, or ownership by EuroLoot.</p>
+
+      <h2>10. Availability and Changes</h2>
+      <p>EuroLoot is currently in development. Features may be added, modified, suspended, or removed as the platform evolves.</p>
+
+      <p>We do not guarantee that the website or any feature will always be available, uninterrupted, secure, or free from errors.</p>
+
+      <h2>11. Disclaimers</h2>
+      <p>To the extent permitted by applicable law, EuroLoot is provided on an “as available” basis. We do not guarantee that all product information, pricing, availability, or external links will always be complete, accurate, or current.</p>
+
+      <p>Nothing in these Terms excludes or limits liability where doing so would be unlawful, including liability that cannot legally be excluded under applicable consumer protection law.</p>
+
+      <h2>12. Consumer Rights</h2>
+      <p>Nothing in these Terms is intended to remove or restrict statutory consumer rights that apply to you under Irish law or applicable European Union law.</p>
+
+      <p>Your rights may depend on whether you purchase directly from EuroLoot or from an external platform. The relevant seller's terms and applicable consumer protection legislation will determine the rights and remedies available to you.</p>
+
+      <h2>13. Governing Law</h2>
+      <p>These Terms are governed by the laws of Ireland, subject to any mandatory consumer protection rights or jurisdictional protections that apply to you under applicable law.</p>
+
+      <h2>14. Changes to These Terms</h2>
+      <p>We may update these Terms to reflect changes to EuroLoot, its services, or applicable legal requirements. Updated Terms will be published on this page with a revised effective date.</p>
+
+      <h2>15. Contact</h2>
+      <p>
+        For questions regarding these Terms, contact:
+        <a href="mailto:euroloot.net@gmail.com">euroloot.net@gmail.com</a>.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="footer-grid">
+        <div>
+          <strong style="color:var(--eu-blue);font-size:14px;">EuroLoot</strong>
+          <p style="margin-top:5px;max-width:300px;">
+            The newest European game marketplace. Creating new deals in the distribution industry for EU users.
+          </p>
+
+          <div class="eu-flag">
+            <div style="background:#003399;width:30px;height:20px;position:relative;border:1px solid #002266;">
+              <div style="color:#ffd617;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;line-height:1;">*</div>
+            </div>
+            In varietate concordia
+          </div>
+        </div>
+
+        <div>
+          <strong style="color:#000;">Links</strong>
+          <ul>
+            <li><a href="index.html">Store</a></li>
+            <li><a href="index.html">Deals</a></li>
+            <li><a href="mailto:euroloot.net@gmail.com">Support</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <strong style="color:#000;">Legal</strong>
+          <ul>
+            <li><a href="terms-of-service.html">Terms of Service</a></li>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="cookie-policy.html">Cookie Policy</a></li>
+            <li><a href="refund-policy.html">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:10px;">
+        &copy; 2026 EuroLoot. Proudly serving the European Union. A website by Colm Lenehan
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
