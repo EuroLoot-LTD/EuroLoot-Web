@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,293 +21,74 @@
       --font-main: Tahoma, Verdana, Arial, sans-serif;
     }
 
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      -webkit-text-size-adjust: 100%;
-    }
-
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
     body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: var(--font-main);
-      font-size: 13px;
-      line-height: 1.5;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      background: var(--bg); color: var(--fg); font-family: var(--font-main);
+      font-size: 13px; line-height: 1.5; min-height: 100vh;
+      display: flex; flex-direction: column;
     }
-
-    a {
-      color: var(--eu-blue);
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    button {
-      font-family: inherit;
-      cursor: pointer;
-    }
-
+    a { color: var(--eu-blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    button { font-family: inherit; cursor: pointer; }
     button:focus-visible, a:focus-visible, input:focus-visible {
-      outline: 3px solid var(--eu-blue);
-      outline-offset: 2px;
+      outline: 3px solid var(--eu-blue); outline-offset: 2px;
     }
-
-    .wrap {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 0 15px;
-      width: 100%;
-    }
-
+    .wrap { max-width: 980px; margin: 0 auto; padding: 0 15px; width: 100%; }
     header {
-      background: #fff;
-      border-bottom: 4px solid var(--eu-blue);
-      padding: 12px 0;
+      background: #fff; border-bottom: 4px solid var(--eu-blue); padding: 12px 0;
       box-shadow: 0 2px 4px rgba(0,0,0,0.08);
     }
-
-    .header-inner {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .logo img {
-      height: 38px;
-      width: auto;
-      border: 1px solid #ccc;
-    }
-
-    nav {
-      display: flex;
-      gap: 5px;
-      margin-left: 15px;
-    }
-
-    nav a {
-      padding: 6px 12px;
-      font-size: 13px;
-      font-weight: bold;
-      color: var(--eu-blue);
-      border: 1px solid transparent;
-    }
-
-    nav a:hover {
-      color: var(--eu-blue-dark);
-      background: var(--surface);
-      border-color: var(--border);
-      text-decoration: none;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-left: auto;
-    }
-
-    .icon-btn {
-      color: var(--eu-blue);
-      font-size: 12px;
-      font-weight: bold;
-      padding: 4px 8px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-    }
-
+    .header-inner { display: flex; align-items: center; gap: 15px; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo img { height: 38px; width: auto; border: 1px solid #ccc; }
+    nav { display: flex; gap: 5px; margin-left: 15px; }
+    nav a { padding: 6px 12px; font-size: 13px; font-weight: bold; color: var(--eu-blue); border: 1px solid transparent; }
+    nav a:hover { color: var(--eu-blue-dark); background: var(--surface); border-color: var(--border); text-decoration: none; }
+    .header-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .icon-btn { color: var(--eu-blue); font-size: 12px; font-weight: bold; padding: 4px 8px; border: 1px solid var(--border); background: var(--surface); }
     .btn-signin, .btn-primary {
       background: linear-gradient(to bottom, var(--eu-yellow), var(--eu-yellow-dark));
-      color: #000;
-      border: 1px solid #cba800;
-      font-weight: bold;
-      text-align: center;
+      color: #000; border: 1px solid #cba800; font-weight: bold; text-align: center;
       text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
     }
-
-    .btn-signin {
-      padding: 4px 12px;
-      font-size: 12px;
-    }
-
-    main {
-      flex: 1;
-    }
-
-    .auth-page {
-      padding: 40px 15px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .auth-card {
-      width: 100%;
-      max-width: 400px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 20px;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .auth-title {
-      font-size: 18px;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 15px;
-      color: var(--eu-blue);
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 10px;
-    }
-
-    .intro {
-      font-size: 12px;
-      color: var(--muted);
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
+    .btn-signin { padding: 4px 12px; font-size: 12px; }
+    main { flex: 1; }
+    .auth-page { padding: 40px 15px; display: flex; justify-content: center; }
+    .auth-card { width: 100%; max-width: 400px; background: var(--surface); border: 1px solid var(--border); padding: 20px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
+    .auth-title { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 15px; color: var(--eu-blue); border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+    .intro { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 15px; }
     .social-btn {
-      display: block;
-      text-align: center;
-      width: 100%;
-      padding: 9px;
-      border: 1px solid var(--border);
-      font-size: 13px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      background: linear-gradient(to bottom, #fff, #eee);
-      color: #000;
-      text-decoration: none;
+      display: block; text-align: center; width: 100%; padding: 9px; border: 1px solid var(--border);
+      font-size: 13px; font-weight: bold; margin-bottom: 10px; background: linear-gradient(to bottom, #fff, #eee);
+      color: #000; text-decoration: none;
     }
-
-    .social-btn:hover:not(:disabled) {
-      background: linear-gradient(to bottom, #eee, #ddd);
-      text-decoration: none;
+    .social-btn:hover:not(:disabled) { background: linear-gradient(to bottom, #eee, #ddd); text-decoration: none; }
+    .social-btn:disabled { opacity: 0.6; cursor: wait; }
+    .policy-consent {
+      background: #fff; border: 1px solid var(--border); padding: 10px; margin: 12px 0;
     }
-
-    .social-btn:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
-
-    .form-group {
-      margin-bottom: 12px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 12px;
-      font-weight: bold;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .form-input {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 9px;
-      font-family: inherit;
-      font-size: 14px;
-      background: #fff;
-      color: var(--fg);
-    }
-
-    .btn-primary {
-      display: block;
-      padding: 9px 15px;
-      font-size: 14px;
-      width: 100%;
-    }
-
-    .btn-primary:hover {
-      background: linear-gradient(to bottom, #ffe44d, var(--eu-yellow));
-    }
-
-    #auth-message {
-      color: #a40000;
-      font-size: 12px;
-      text-align: center;
-      margin-top: 12px;
-      overflow-wrap: anywhere;
-    }
-
-    footer {
-      background: var(--surface);
-      border-top: 4px solid var(--eu-blue);
-      padding: 30px 0;
-      margin-top: auto;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .footer-grid {
-      display: flex;
-      justify-content: space-between;
-      gap: 25px;
-    }
-
-    .footer-grid ul {
-      list-style: none;
-    }
-
-    .eu-flag {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
-      font-weight: bold;
-      color: var(--eu-blue);
-    }
-
+    .policy-consent p { margin-bottom: 8px; color: #222; }
+    .policy-consent label { display: flex; align-items: flex-start; gap: 7px; margin: 9px 0; line-height: 1.5; }
+    .policy-consent input { margin-top: 3px; accent-color: var(--eu-blue); flex-shrink: 0; }
+    .policy-consent a { text-decoration: underline; }
+    .form-group { margin-bottom: 12px; }
+    .form-label { display: block; font-size: 12px; font-weight: bold; color: var(--muted); margin-bottom: 4px; }
+    .form-input { width: 100%; border: 1px solid var(--border); border-radius: 2px; padding: 9px; font-family: inherit; font-size: 14px; background: #fff; color: var(--fg); }
+    .btn-primary { display: block; padding: 9px 15px; font-size: 14px; width: 100%; }
+    .btn-primary:hover { background: linear-gradient(to bottom, #ffe44d, var(--eu-yellow)); }
+    #auth-message { color: #a40000; font-size: 12px; text-align: center; margin-top: 12px; overflow-wrap: anywhere; }
+    footer { background: var(--surface); border-top: 4px solid var(--eu-blue); padding: 30px 0; margin-top: auto; font-size: 11px; color: var(--muted); }
+    .footer-grid { display: flex; justify-content: space-between; gap: 25px; }
+    .footer-grid ul { list-style: none; }
+    .eu-flag { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-weight: bold; color: var(--eu-blue); }
     @media (max-width: 720px) {
-      .header-inner {
-        flex-wrap: wrap;
-      }
-
-      nav {
-        margin-left: 0;
-      }
-
-      .header-actions {
-        margin-left: auto;
-      }
-
-      .footer-grid {
-        flex-wrap: wrap;
-      }
+      .header-inner { flex-wrap: wrap; } nav { margin-left: 0; }
+      .header-actions { margin-left: auto; } .footer-grid { flex-wrap: wrap; }
     }
-
     @media (max-width: 420px) {
-      .header-inner {
-        gap: 8px;
-      }
-
-      nav a {
-        padding: 5px;
-      }
-
-      .header-actions {
-        gap: 5px;
-      }
-
-      .icon-btn {
-        padding: 4px;
-      }
+      .header-inner { gap: 8px; } nav a { padding: 5px; }
+      .header-actions { gap: 5px; } .icon-btn { padding: 4px; }
     }
   </style>
 </head>
@@ -320,13 +100,11 @@
         <a href="../index.html" class="logo" aria-label="EuroLoot home">
           <img src="../images/EuroLoot.png" alt="EuroLoot">
         </a>
-
         <nav aria-label="Main navigation">
           <a href="../index.html">Store</a>
           <a href="../index.html">Deals</a>
           <a href="../index.html">Wishlist</a>
         </nav>
-
         <div class="header-actions">
           <a href="../index.html" class="icon-btn">Wishlist</a>
           <a href="../index.html" class="icon-btn">Cart (0)</a>
@@ -340,63 +118,48 @@
     <div class="wrap auth-page">
       <section class="auth-card" aria-labelledby="auth-title">
         <h1 class="auth-title" id="auth-title">Sign In / Register</h1>
+        <p class="intro">Sign in to EuroLoot to access your customer account and game library.</p>
 
-        <p class="intro">
-          Sign in to EuroLoot to access your customer account and game library.
-        </p>
+        <div class="policy-consent" aria-label="Required policy acceptance">
+          <p><strong>Before continuing, please accept all four policies:</strong></p>
+          <label>
+            <input type="checkbox" id="accept-terms">
+            <span>I accept the <a href="../terms-of-service.html" target="_blank" rel="noopener noreferrer">Terms of Service</a>.</span>
+          </label>
+          <label>
+            <input type="checkbox" id="accept-privacy">
+            <span>I accept the <a href="../privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</span>
+          </label>
+          <label>
+            <input type="checkbox" id="accept-cookies">
+            <span>I accept the <a href="../cookie-policy.html" target="_blank" rel="noopener noreferrer">Cookie Policy</a>.</span>
+          </label>
+          <label>
+            <input type="checkbox" id="accept-refunds">
+            <span>I accept the <a href="../refund-policy.html" target="_blank" rel="noopener noreferrer">Refund Policy</a>.</span>
+          </label>
+        </div>
 
-        <button type="button" class="social-btn" id="google-button">
-          Continue with Google
-        </button>
-
-        <button type="button" class="social-btn" id="steam-button">
-          Sign in with Steam
-        </button>
-
-        <button type="button" class="social-btn" id="discord-button">
-          Sign in with Discord
-        </button>
-
-        <button type="button" class="social-btn" id="itch-button">
-          Sign in with Itch.io
-        </button>
+        <button type="button" class="social-btn" id="google-button">Continue with Google</button>
+        <button type="button" class="social-btn" id="steam-button">Sign in with Steam</button>
+        <button type="button" class="social-btn" id="discord-button">Sign in with Discord</button>
+        <button type="button" class="social-btn" id="itch-button">Sign in with Itch.io</button>
 
         <div style="text-align:center; margin:20px 0; border-bottom:1px solid var(--border); line-height:0.1em;">
-          <span style="background:var(--surface); padding:0 10px; color:var(--muted);">
-            Email sign-in
-          </span>
+          <span style="background:var(--surface); padding:0 10px; color:var(--muted);">Email sign-in</span>
         </div>
 
         <form id="email-login-form">
           <div class="form-group">
             <label class="form-label" for="email">Email address</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              class="form-input"
-              autocomplete="email"
-              required
-            >
+            <input id="email" name="email" type="email" class="form-input" autocomplete="email" required>
           </div>
-
           <div class="form-group">
             <label class="form-label" for="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              class="form-input"
-              autocomplete="current-password"
-              required
-            >
+            <input id="password" name="password" type="password" class="form-input" autocomplete="current-password" required>
           </div>
-
-          <button type="submit" class="btn-primary">
-            Sign in with email
-          </button>
+          <button type="submit" class="btn-primary">Sign in with email</button>
         </form>
-
         <p id="auth-message" role="status" aria-live="polite"></p>
       </section>
     </div>
@@ -407,10 +170,7 @@
       <div class="footer-grid">
         <div>
           <strong style="color:var(--eu-blue); font-size:14px;">EuroLoot</strong>
-          <p style="margin-top:5px; max-width:300px;">
-            Your European game marketplace.
-          </p>
-
+          <p style="margin-top:5px; max-width:300px;">Your European game marketplace.</p>
           <div class="eu-flag">
             <div style="background:#003399; width:30px; height:20px; position:relative; border:1px solid #002266;">
               <div style="color:#ffd617; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:12px; line-height:1;">*</div>
@@ -418,7 +178,6 @@
             In varietate concordia
           </div>
         </div>
-
         <div>
           <strong style="color:#000;">Links</strong>
           <ul style="margin-top:5px;">
@@ -427,18 +186,16 @@
             <li><a href="mailto:euroloot.net@gmail.com">Support</a></li>
           </ul>
         </div>
-
         <div>
           <strong style="color:#000;">Legal</strong>
           <ul style="margin-top:5px;">
-            <li><a href="../index.html">Terms of Service</a></li>
-            <li><a href="../index.html">Privacy Policy</a></li>
-            <li><a href="../index.html">Cookie Policy</a></li>
-            <li><a href="../index.html">Refund Policy</a></li>
+            <li><a href="../terms-of-service.html">Terms of Service</a></li>
+            <li><a href="../privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="../cookie-policy.html">Cookie Policy</a></li>
+            <li><a href="../refund-policy.html">Refund Policy</a></li>
           </ul>
         </div>
       </div>
-
       <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:10px;">
         &copy; 2026 EuroLoot. Proudly serving the European Union.
       </div>
@@ -453,12 +210,12 @@
       const message = document.getElementById('auth-message');
       const googleButton = document.getElementById('google-button');
       const emailForm = document.getElementById('email-login-form');
+      const policyIds = ['accept-terms', 'accept-privacy', 'accept-cookies', 'accept-refunds'];
 
       const SUPABASE_URL = 'https://gepavrbxsdjmmtvwwtdc.supabase.co';
       const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_zJNUK33LL5YQOu0mKDBY0g_FglwQg6N';
-
-      const SIGNUP_COMPLETION_URL =
-        'https://euroloot-ltd.github.io/EuroLoot-Web/pages/signup-completion.html';
+      const SIGNUP_COMPLETION_URL = 'https://euroloot-ltd.github.io/EuroLoot-Web/pages/signup-completion.html';
+      const POLICY_VERSION = '2026-10-18';
 
       let supabaseClient;
 
@@ -466,22 +223,20 @@
         message.textContent = text;
       }
 
+      function allPoliciesAccepted() {
+        return policyIds.every((id) => document.getElementById(id).checked);
+      }
+
       function setGoogleLoading(loading) {
         googleButton.disabled = loading;
-        googleButton.textContent = loading
-          ? 'Connecting to Google…'
-          : 'Continue with Google';
+        googleButton.textContent = loading ? 'Connecting to Google…' : 'Continue with Google';
       }
 
       try {
         if (!window.supabase || !window.supabase.createClient) {
           throw new Error('The authentication library could not load. Please refresh.');
         }
-
-        supabaseClient = window.supabase.createClient(
-          SUPABASE_URL,
-          SUPABASE_PUBLISHABLE_KEY
-        );
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
       } catch (error) {
         showMessage(error.message || 'Authentication could not initialise.');
         googleButton.disabled = true;
@@ -493,20 +248,27 @@
           return;
         }
 
+        if (!allPoliciesAccepted()) {
+          showMessage('Please accept all four EuroLoot policies before continuing.');
+          const firstUnchecked = policyIds.map((id) => document.getElementById(id)).find((box) => !box.checked);
+          if (firstUnchecked) firstUnchecked.focus();
+          return;
+        }
+
+        localStorage.setItem('euroloot_policy_consent_v1', JSON.stringify({
+          policyVersion: POLICY_VERSION,
+          acceptedAt: new Date().toISOString()
+        }));
+
         setGoogleLoading(true);
         showMessage('');
 
         try {
           const { error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
-            options: {
-              redirectTo: SIGNUP_COMPLETION_URL
-            }
+            options: { redirectTo: SIGNUP_COMPLETION_URL }
           });
-
-          if (error) {
-            throw error;
-          }
+          if (error) throw error;
         } catch (error) {
           showMessage('Google sign-in failed: ' + (error.message || 'Please try again.'));
           setGoogleLoading(false);
@@ -515,25 +277,23 @@
 
       emailForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-
+        if (!allPoliciesAccepted()) {
+          showMessage('Please accept all four EuroLoot policies before continuing.');
+          return;
+        }
         if (!supabaseClient) {
           showMessage('Authentication is unavailable. Please refresh and try again.');
           return;
         }
-
-        showMessage(
-          'Email and password sign-in is not enabled on this page yet. Please use Google.'
-        );
+        showMessage('Email and password sign-in is not enabled on this page yet. Please use Google.');
       });
 
       document.getElementById('steam-button').addEventListener('click', () => {
         showMessage('Steam sign-in has not been configured yet.');
       });
-
       document.getElementById('discord-button').addEventListener('click', () => {
         showMessage('Discord sign-in has not been configured yet.');
       });
-
       document.getElementById('itch-button').addEventListener('click', () => {
         showMessage('Itch.io sign-in has not been configured yet.');
       });
