@@ -204,25 +204,71 @@ footer{
 </div>
 
 <div id="app">
+
 <header>
   <div class="wrap">
     <div class="header-inner">
       <a href="#" class="logo" onclick="navigate('home');return false">
         <img src="images/EuroLoot.png" alt="EuroLoot">
       </a>
+
       <nav id="main-nav">
         <a href="#" onclick="navigate('store');return false" data-i18n="store">Store</a>
         <a href="#" onclick="navigate('deals');return false" data-i18n="deals">Deals</a>
         <a href="#" onclick="navigate('wishlist');return false" data-i18n="wishlist">Wishlist</a>
       </nav>
+
       <div class="header-search">
-        <input type="text" id="header-search" placeholder="Search Steam games..." autocomplete="off" oninput="debounceSearch(this.value)" data-i18n-ph="search">
+        <input
+          type="text"
+          id="header-search"
+          placeholder="Search Steam games..."
+          autocomplete="off"
+          oninput="debounceSearch(this.value)"
+          data-i18n-ph="search"
+        >
         <div class="search-dropdown" id="search-dropdown" style="display:none"></div>
       </div>
+
       <div class="header-actions">
-        <a href="#" class="icon-btn" onclick="navigate('wishlist');return false" title="Wishlist" data-i18n="wishlist">Wishlist</a>
-        <a href="#" class="icon-btn" onclick="navigate('cart');return false" title="Cart"><span data-i18n="cart">Cart</span> (<span id="cart-badge">0</span>)</a>
-        <a href="pages/login.html" class="btn-signin" data-i18n="login">Sign in</a>
+        <a
+          href="#"
+          class="icon-btn"
+          onclick="navigate('wishlist');return false"
+          title="Wishlist"
+          data-i18n="wishlist"
+        >Wishlist</a>
+
+        <a
+          href="#"
+          class="icon-btn"
+          onclick="navigate('cart');return false"
+          title="Cart"
+        >
+          <span data-i18n="cart">Cart</span>
+          (<span id="cart-badge">0</span>)
+        </a>
+
+        <a
+          id="auth-signin-link"
+          href="pages/login.html"
+          class="btn-signin"
+          data-i18n="login"
+        >Sign in</a>
+
+        <a
+          id="auth-account-link"
+          href="pages/profile-settings.html"
+          class="icon-btn"
+          style="display:none"
+        >My Account</a>
+
+        <button
+          id="auth-signout-button"
+          class="icon-btn"
+          type="button"
+          style="display:none"
+        >Sign out</button>
       </div>
     </div>
   </div>
@@ -1111,7 +1157,7 @@ if(initSecurityAndLocale()){
     const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'https://euroloot-ltd.github.io/EuroLoot-Web/'
+        redirectTo: 'https://euroloot-ltd.github.io/EuroLoot-Web/pages/signup-completion.html'
       }
     });
 
@@ -1119,6 +1165,77 @@ if(initSecurityAndLocale()){
       alert('Google sign-in failed: ' + error.message);
     }
   }
+
+
+  const authSignInLink = document.getElementById('auth-signin-link');
+  const authAccountLink = document.getElementById('auth-account-link');
+  const authSignOutButton = document.getElementById('auth-signout-button');
+
+  async function updateAuthHeader(session) {
+    if (!authSignInLink || !authAccountLink || !authSignOutButton) {
+      console.warn('Auth header elements are missing.');
+      return;
+    }
+
+    const signedIn = Boolean(session?.user);
+
+    authSignInLink.style.display = signedIn ? 'none' : '';
+    authAccountLink.style.display = signedIn ? '' : 'none';
+    authSignOutButton.style.display = signedIn ? '' : 'none';
+
+    if (!signedIn) {
+      authAccountLink.textContent = 'My Account';
+      return;
+    }
+
+    try {
+      const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('username, display_name')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      authAccountLink.textContent =
+        data?.display_name || data?.username || 'My Account';
+    } catch (error) {
+      console.error('Could not load account details:', error);
+      authAccountLink.textContent = 'My Account';
+    }
+  }
+
+  // Restore the existing login session.
+  supabaseClient.auth.getSession().then(({ data, error }) => {
+    if (error) console.error('Session check failed:', error);
+    void updateAuthHeader(data?.session || null);
+  });
+
+  // Refresh the header when login status changes.
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    window.setTimeout(() => {
+      void updateAuthHeader(session);
+    }, 0);
+  });
+
+  // Sign out.
+  if (authSignOutButton) {
+    authSignOutButton.addEventListener('click', async () => {
+      authSignOutButton.disabled = true;
+
+      const { error } = await supabaseClient.auth.signOut();
+
+      authSignOutButton.disabled = false;
+
+      if (error) {
+        alert('Could not sign out: ' + error.message);
+        return;
+      }
+
+      window.location.reload();
+    });
+  }
+
 </script>
 </body>
 </html>
