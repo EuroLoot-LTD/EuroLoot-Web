@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EuroLoot Refund Policy — Information about refunds for external store and direct EuroLoot purchases.">
+  <title>EuroLoot | Refund Policy</title>
+  <link rel="icon" href="../images/EuroLootIcon.png">
+
+  <style>
+    :root {
+      --eu-blue: #003399;
+      --eu-blue-dark: #002266;
+      --eu-yellow: #ffd617;
+      --eu-yellow-dark: #e6c014;
+      --bg: #ffffff;
+      --surface: #f0f2f5;
+      --border: #b0b5ba;
+      --fg: #222222;
+      --muted: #555555;
+      --font-main: Tahoma, Verdana, Arial, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-main);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      color: var(--eu-blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    :focus-visible {
+      outline: 1px dotted var(--eu-blue);
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 15px;
+      width: 100%;
+    }
+
+    header {
+      background: #fff;
+      border-bottom: 4px solid var(--eu-blue);
+      color: var(--fg);
+      padding: 12px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none !important;
+    }
+
+    .logo img {
+      height: 38px;
+      width: auto;
+      border: 1px solid #ccc;
+    }
+
+    nav {
+      display: flex;
+      gap: 5px;
+      margin-left: 15px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--eu-blue);
+      text-decoration: none !important;
+      border: 1px solid transparent;
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: var(--eu-blue-dark);
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    .btn-signin {
+      background: linear-gradient(to bottom, var(--eu-yellow), var(--eu-yellow-dark));
+      color: #000;
+      border: 1px solid #cba800;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      text-decoration: none !important;
+      white-space: nowrap;
+    }
+
+    .btn-signin:hover {
+      background: linear-gradient(to bottom, #ffe44d, var(--eu-yellow));
+    }
+
+    main {
+      flex: 1;
+      padding: 30px 0 40px;
+    }
+
+    .legal-page {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 25px;
+      box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    .legal-page h1 {
+      color: var(--eu-blue);
+      font-size: 24px;
+      margin-bottom: 5px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--eu-blue);
+    }
+
+    .effective {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 20px;
+    }
+
+    .legal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--eu-yellow-dark);
+      padding: 12px 15px;
+      margin-bottom: 25px;
+    }
+
+    .legal-page h2 {
+      color: var(--eu-blue);
+      font-size: 16px;
+      margin: 24px 0 8px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .legal-page p {
+      margin: 0 0 12px;
+    }
+
+    .legal-page ul {
+      list-style: disc;
+      padding-left: 25px;
+      margin: 0 0 15px;
+    }
+
+    .legal-page li {
+      margin-bottom: 6px;
+    }
+
+    footer {
+      background: var(--surface);
+      border-top: 4px solid var(--eu-blue);
+      padding: 25px 0;
+      margin-top: auto;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
+
+    .footer-title {
+      color: var(--eu-blue);
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .footer-links {
+      list-style: none;
+      margin-top: 5px;
+    }
+
+    .footer-links li {
+      margin-bottom: 4px;
+    }
+
+    .eu-flag {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      font-weight: bold;
+      color: var(--eu-blue);
+    }
+
+    @media (max-width: 700px) {
+      .header-inner {
+        flex-wrap: wrap;
+      }
+
+      nav {
+        margin-left: 0;
+      }
+
+      .header-actions {
+        margin-left: 0;
+      }
+
+      .legal-page {
+        padding: 18px;
+      }
+
+      .legal-page h1 {
+        font-size: 21px;
+      }
+
+      .footer-grid {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap">
+      <div class="header-inner">
+        <a href="../index.html" class="logo" aria-label="EuroLoot home">
+          <img src="../images/EuroLoot.png" alt="EuroLoot">
+        </a>
+
+        <nav aria-label="Main navigation">
+          <a href="../index.html">Home</a>
+          <a href="../index.html">Store</a>
+          <a href="../index.html">Deals</a>
+        </nav>
+
+        <div class="header-actions">
+          <a href="login.html" class="btn-signin">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <article class="legal-page">
+        <h1>Refund Policy</h1>
+        <p class="effective">Effective date: 18 September 2026. Last reviewed: 18 September 2026.</p>
+
+        <div class="legal-box">
+          This Refund Policy explains how refund enquiries are handled depending on whether a purchase is completed through an external store or directly through EuroLoot.
+        </div>
+
+        <h2>1. External Store Purchases</h2>
+        <p>When you select an external purchasing option on EuroLoot, you may be redirected to a third-party platform to complete the transaction.</p>
+
+        <p>For example, selecting a Steam purchasing option redirects you to Steam, where the purchase is completed under Valve Corporation's applicable terms and refund policy.</p>
+
+        <p>For purchases completed through an external store, refund requests should generally be submitted to the store or seller that processed the transaction.</p>
+
+        <p>EuroLoot does not control the external store's refund decisions, payment systems, fulfilment arrangements, or customer support processes.</p>
+
+        <h2>2. Steam Purchases</h2>
+        <p>For purchases completed through Steam, Valve Corporation's applicable refund policy and purchasing terms apply.</p>
+
+        <p>
+          You can review Steam's refund information at:
+          <a href="https://store.steampowered.com/steam_refunds/" target="_blank" rel="noopener noreferrer">store.steampowered.com/steam_refunds</a>.
+        </p>
+
+        <p>Refund eligibility depends on the purchase, product, applicable policy, and consumer rights that apply to the transaction.</p>
+
+        <h2>3. Direct EuroLoot Purchases</h2>
+        <p>If EuroLoot processes a purchase directly, the refund terms applicable to that product and transaction will be provided through the relevant purchasing process.</p>
+
+        <p>Refunds, cancellations, delivery issues, defective products, and other consumer remedies will be handled in accordance with applicable Irish and European Union law.</p>
+
+        <p>This section applies only to direct EuroLoot transactions that are operational and clearly identified as such.</p>
+
+        <h2>4. Statutory Consumer Rights</h2>
+        <p>Nothing in this policy is intended to exclude or restrict statutory consumer rights.</p>
+
+        <p>Depending on the type of product or service, you may have rights relating to cancellation, defective goods, digital content, delivery, or other consumer remedies. The applicable rights depend on the transaction, seller, product, and relevant law.</p>
+
+        <h2>5. Contact and Support</h2>
+        <p>
+          If you are unsure which platform processed your purchase or need help identifying the appropriate refund process, contact:
+          <a href="mailto:euroloot.net@gmail.com">euroloot.net@gmail.com</a>.
+        </p>
+
+        <p>When contacting us, avoid sending unnecessary payment details, passwords, or other sensitive information.</p>
+
+        <h2>6. Policy Changes</h2>
+        <p>We may update this Refund Policy when EuroLoot introduces new purchasing functionality or when applicable legal requirements change. Updates will be published on this page.</p>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-title">EuroLoot</div>
+          <p style="margin-top:5px; max-width:300px;">
+            The newest European game marketplace. Creating new deals in the distribution industry for EU users.
+          </p>
+
+          <div class="eu-flag">
+            <div style="background:#003399; width:30px; height:20px; position:relative; border:1px solid #002266; flex-shrink:0;">
+              <div style="color:#ffd617; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:12px; line-height:1;">*</div>
+            </div>
+            In varietate concordia
+          </div>
+        </div>
+
+        <div>
+          <strong style="color:#000;">Links</strong>
+          <ul class="footer-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../index.html">Store</a></li>
+            <li><a href="mailto:euroloot.net@gmail.com">Support</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <strong style="color:#000;">Legal</strong>
+          <ul class="footer-links">
+            <li><a href="terms-of-service.html">Terms of Service</a></li>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="cookie-policy.html">Cookie Policy</a></li>
+            <li><a href="refund-policy.html" aria-current="page">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:10px;">
+        &copy; 2026 EuroLoot. Proudly serving the European Union. A website by Colm Lenehan
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
