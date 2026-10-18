@@ -1,267 +1,582 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Complete Your Profile | EuroLoot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Complete your profile | EuroLoot</title>
+  <link rel="icon" href="../images/EuroLootIcon.png">
+
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --eu-blue: #003399;
+      --eu-blue-dark: #002266;
+      --eu-yellow: #ffd617;
+      --bg: #ffffff;
+      --surface: #f0f2f5;
+      --border: #b0b5ba;
+      --fg: #222222;
+      --muted: #555555;
+      --font-main: Tahoma, Verdana, Arial, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { -webkit-text-size-adjust: 100%; }
 
     body {
       margin: 0;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      color: var(--fg);
+      font: 13px/1.5 var(--font-main);
+    }
+
+    a { color: var(--eu-blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .site-header {
+      padding: 12px 16px;
+      border-bottom: 4px solid var(--eu-blue);
+      box-shadow: 0 2px 4px rgb(0 0 0 / 8%);
+      text-align: center;
+    }
+
+    .logo {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
-      background: #10131b;
-      color: #f5f7fa;
-      font-family: Arial, sans-serif;
     }
 
-    .panel {
+    .logo img {
+      width: auto;
+      height: 38px;
+      border: 1px solid #ccc;
+    }
+
+    main {
       width: 100%;
-      max-width: 440px;
-      padding: 32px;
-      background: #1b202b;
-      border: 1px solid #303747;
-      border-radius: 16px;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 36px 18px 42px;
+      flex: 1;
     }
 
-    h1 { margin-top: 0; font-size: 27px; }
-    p { color: #b9c1d0; line-height: 1.5; }
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--eu-blue);
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.25;
+      font-weight: bold;
+    }
+
+    .intro {
+      margin: 9px 0 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .form-panel {
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: 2px 2px 5px rgb(0 0 0 / 8%);
+    }
+
+    .field { margin-bottom: 17px; }
 
     label {
       display: block;
-      margin: 20px 0 8px;
+      margin-bottom: 6px;
       font-weight: bold;
     }
 
-    input {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #414b5e;
-      border-radius: 8px;
-      background: #10131b;
-      color: white;
-      font-size: 16px;
+    .optional {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: normal;
     }
 
-    button {
+    input[type="text"] {
+      display: block;
       width: 100%;
-      margin-top: 24px;
-      padding: 14px;
-      border: 0;
-      border-radius: 8px;
-      background: #b9f36a;
-      color: #10131b;
-      font-size: 16px;
+      min-height: 36px;
+      padding: 8px 9px;
+      border: 1px solid var(--border);
+      border-radius: 0;
+      background: #fff;
+      color: var(--fg);
+      font: 13px var(--font-main);
+    }
+
+    input:focus-visible {
+      outline: 2px solid var(--eu-blue);
+      outline-offset: 1px;
+    }
+
+    .help {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .avatar-row {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .avatar-preview {
+      display: flex;
+      flex: 0 0 58px;
+      width: 58px;
+      height: 58px;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--eu-blue);
+      font-size: 22px;
       font-weight: bold;
+    }
+
+    .avatar-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-controls { min-width: 0; }
+
+    .file-input {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      font: 12px var(--font-main);
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      min-height: 38px;
+      margin-top: 7px;
+      padding: 9px 12px;
+      border: 1px solid var(--eu-yellow-dark, #e6c014);
+      background: var(--eu-yellow);
+      color: #222;
+      font: bold 13px var(--font-main);
       cursor: pointer;
     }
 
-    button:disabled { opacity: 0.6; cursor: wait; }
-    #status { margin-top: 18px; overflow-wrap: anywhere; }
-    .error { color: #ff9292; }
-    .success { color: #b9f36a; }
-    .small { font-size: 13px; }
+    .button:hover { background: #ffe44d; }
+    .button:disabled { opacity: .65; cursor: wait; }
+
+    #status {
+      margin: 0 0 15px;
+      padding: 9px 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      overflow-wrap: anywhere;
+    }
+
+    #status:empty { display: none; }
+    #status.error { border-color: #cc0000; color: #a00000; }
+    #status.success { border-color: #006600; color: #006600; }
+
+    .form-panel[hidden] { display: none; }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 18px;
+      font-size: 12px;
+    }
+
+    .site-footer {
+      padding: 13px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      text-align: center;
+      font-size: 11px;
+    }
+
+    @media (max-width: 420px) {
+      main { padding: 26px 14px 32px; }
+      .form-panel { padding: 16px; }
+      h1 { font-size: 22px; }
+    }
   </style>
 </head>
-<body>
-  <main class="panel">
-    <h1>Welcome to EuroLoot!</h1>
-    <p>Choose your username to finish setting up your account.</p>
 
-    <p id="status" role="status" aria-live="polite">
-      Checking your sign-in...
+<body>
+  <header class="site-header">
+    <a class="logo" href="../index.html" aria-label="EuroLoot home">
+      <img src="../images/EuroLoot.png" alt="EuroLoot">
+    </a>
+  </header>
+
+  <main>
+    <p class="eyebrow">Your EuroLoot account</p>
+    <h1>Finish setting up your profile</h1>
+    <p class="intro">
+      Choose a username so other players can recognise you.
+      You can change your display name or picture later.
     </p>
 
-    <form id="profile-form" hidden>
-      <label for="username">Username</label>
-      <input
-        id="username"
-        name="username"
-        type="text"
-        minlength="3"
-        maxlength="20"
-        pattern="[A-Za-z0-9_]+"
-        autocomplete="username"
-        placeholder="e.g. EuroGamer123"
-        required
-      >
-      <p class="small">3–20 characters. Use letters, numbers or underscores.</p>
+    <p id="status" role="status" aria-live="polite">
+      Checking your sign-in…
+    </p>
 
-      <label for="display-name">Display name (optional)</label>
-      <input
-        id="display-name"
-        name="display_name"
-        type="text"
-        maxlength="60"
-        autocomplete="nickname"
-        placeholder="How should we display your name?"
-      >
+    <section class="form-panel" id="form-panel" hidden>
+      <form id="profile-form">
+        <div class="field">
+          <label for="username">Username</label>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            minlength="3"
+            maxlength="20"
+            pattern="[A-Za-z0-9_]+"
+            autocomplete="username"
+            placeholder="e.g. EuroGamer123"
+            required
+          >
+          <p class="help">3–20 characters: letters, numbers and underscores.</p>
+        </div>
 
-      <button id="submit-button" type="submit">
-        Complete sign-up
-      </button>
-    </form>
+        <div class="field">
+          <label for="display-name">
+            Display name <span class="optional">— optional</span>
+          </label>
+          <input
+            id="display-name"
+            name="display_name"
+            type="text"
+            maxlength="60"
+            autocomplete="nickname"
+            placeholder="The name people will see"
+          >
+        </div>
 
-    <p><a href="../index.html" style="color:#b9f36a">Back to EuroLoot</a></p>
+        <div class="field">
+          <label for="avatar">
+            Profile picture <span class="optional">— optional</span>
+          </label>
+
+          <div class="avatar-row">
+            <div class="avatar-preview" id="avatar-preview" aria-label="Picture preview">
+              E
+            </div>
+            <div class="avatar-controls">
+              <input
+                class="file-input"
+                id="avatar"
+                name="avatar"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                aria-describedby="avatar-help"
+              >
+              <p class="help" id="avatar-help">JPG, PNG or WebP. Maximum 2 MB.</p>
+            </div>
+          </div>
+        </div>
+
+        <button class="button" id="submit-button" type="submit">
+          Save profile
+        </button>
+      </form>
+    </section>
+
+    <a class="back-link" href="../index.html">← Back to EuroLoot</a>
   </main>
+
+  <footer class="site-footer">
+    &copy; 2026 EuroLoot · Games and deals for players across Europe
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = 'https://gepavrbxsdjmmtvwwtdc.supabase.co';
-    const SUPABASE_PUBLIC_KEY = 'PASTE_YOUR_PUBLIC_KEY_HERE';
+    (() => {
+      'use strict';
 
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLIC_KEY
-    );
+      const SUPABASE_URL =
+        'https://gepavrbxsdjmmtvwwtdc.supabase.co';
 
-    const statusEl = document.getElementById('status');
-    const form = document.getElementById('profile-form');
-    const usernameInput = document.getElementById('username');
-    const displayNameInput = document.getElementById('display-name');
-    const submitButton = document.getElementById('submit-button');
+      // This is the same publishable key used by index.html.
+      const SUPABASE_PUBLIC_KEY =
+        'sb_publishable_zJNUK33LL5YQOu0mKDBY0g_FglwQg6N';
 
-    let currentUser = null;
+      const AVATAR_BUCKET = 'avatars';
+      const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 
-    function showStatus(message, type = '') {
-      statusEl.textContent = message;
-      statusEl.className = type;
-    }
+      const statusEl = document.getElementById('status');
+      const formPanel = document.getElementById('form-panel');
+      const form = document.getElementById('profile-form');
+      const usernameInput = document.getElementById('username');
+      const displayNameInput = document.getElementById('display-name');
+      const avatarInput = document.getElementById('avatar');
+      const avatarPreview = document.getElementById('avatar-preview');
+      const submitButton = document.getElementById('submit-button');
 
-    async function initialise() {
-      try {
-        if (SUPABASE_PUBLIC_KEY === ''sb_publishable_zJNUK33LL5YQOu0mKDBY0g_FglwQg6') {
-          throw new Error('Add your Supabase public key to this page first.');
-        }
+      const supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLIC_KEY
+      );
 
-        // Let Supabase process the OAuth callback and restore the session.
-        const { data: sessionData, error: sessionError } =
-          await supabaseClient.auth.getSession();
+      let currentUser = null;
+      let existingAvatarUrl = null;
+      let previewUrl = null;
 
-        if (sessionError) throw sessionError;
-
-        // Remove OAuth tokens from the address bar after session processing.
-        if (window.location.hash) {
-          window.history.replaceState(
-            null,
-            document.title,
-            window.location.pathname + window.location.search
-          );
-        }
-
-        if (!sessionData.session) {
-          window.location.replace('login.html');
-          return;
-        }
-
-        // Verify the signed-in user with Supabase.
-        const { data: userData, error: userError } =
-          await supabaseClient.auth.getUser();
-
-        if (userError || !userData.user) {
-          await supabaseClient.auth.signOut();
-          window.location.replace('login.html');
-          return;
-        }
-
-        currentUser = userData.user;
-
-        const { data: profile, error: profileError } =
-          await supabaseClient
-            .from('profiles')
-            .select('id, username, display_name')
-            .eq('id', currentUser.id)
-            .maybeSingle();
-
-        if (profileError) throw profileError;
-
-        // A non-empty username means the profile is already complete.
-        if (profile && profile.username && profile.username.trim()) {
-          window.location.replace('../index.html');
-          return;
-        }
-
-        if (profile?.display_name) {
-          displayNameInput.value = profile.display_name;
-        }
-
-        form.hidden = false;
-        showStatus('You are signed in. Choose your username.');
-      } catch (error) {
-        console.error('Profile setup error:', error);
-        showStatus(
-          error.message || 'Could not load your profile. Please try again.',
-          'error'
-        );
-      }
-    }
-
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-
-      if (!currentUser) {
-        showStatus('Your sign-in has expired. Please sign in again.', 'error');
-        return;
+      function showStatus(message, type = '') {
+        statusEl.textContent = message;
+        statusEl.className = type;
       }
 
-      const username = usernameInput.value.trim();
-      const displayName = displayNameInput.value.trim();
+      function showAvatar(src) {
+        avatarPreview.replaceChildren();
 
-      if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) {
-        showStatus(
-          'Username must be 3–20 characters using letters, numbers or underscores.',
-          'error'
-        );
-        return;
+        if (src) {
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = 'Profile picture preview';
+          avatarPreview.appendChild(img);
+        } else {
+          avatarPreview.textContent =
+            (usernameInput.value.trim()[0] || 'E').toUpperCase();
+        }
       }
 
-      if (displayName.length > 60) {
-        showStatus('Display name must be 60 characters or fewer.', 'error');
-        return;
+      function validateAvatar(file) {
+        if (!file) return;
+
+        const allowedTypes = [
+          'image/jpeg',
+          'image/png',
+          'image/webp'
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+          throw new Error('Choose a JPG, PNG or WebP image.');
+        }
+
+        if (file.size > MAX_AVATAR_BYTES) {
+          throw new Error('Your picture must be 2 MB or smaller.');
+        }
       }
 
-      submitButton.disabled = true;
-      showStatus('Saving your profile...');
+      async function initialise() {
+        try {
+          if (!window.supabase) {
+            throw new Error('The sign-in service could not be loaded. Refresh and try again.');
+          }
 
-      try {
-        const { error } = await supabaseClient
-          .from('profiles')
-          .upsert({
-            id: currentUser.id,
-            username: username,
-            display_name: displayName || null,
-            updated_at: new Date().toISOString()
-          }, {
-            onConflict: 'id'
-          });
+          // Supabase processes the OAuth callback and restores the session.
+          const { data, error } =
+            await supabaseClient.auth.getSession();
 
-        if (error) {
-          if (error.code === '23505') {
-            throw new Error(
-              'That username is already taken. Please choose another.'
+          if (error) throw error;
+
+          if (!data.session) {
+            showStatus('You are not signed in. Please sign in to continue.', 'error');
+            return;
+          }
+
+          const { data: userData, error: userError } =
+            await supabaseClient.auth.getUser();
+
+          if (userError) throw userError;
+          if (!userData.user) {
+            throw new Error('We could not verify your account. Please sign in again.');
+          }
+
+          currentUser = userData.user;
+
+          const { data: profile, error: profileError } =
+            await supabaseClient
+              .from('profiles')
+              .select('id, username, display_name, avatar_url')
+              .eq('id', currentUser.id)
+              .maybeSingle();
+
+          if (profileError) throw profileError;
+
+          if (profile?.username?.trim()) {
+            window.location.replace('../index.html');
+            return;
+          }
+
+          if (profile?.display_name) {
+            displayNameInput.value = profile.display_name;
+          }
+
+          existingAvatarUrl = profile?.avatar_url || null;
+          showAvatar(existingAvatarUrl);
+
+          formPanel.hidden = false;
+          showStatus('Signed in. Choose a username to finish.', '');
+
+          // Remove OAuth tokens from the address bar after the SDK
+          // has had the opportunity to restore the session.
+          if (window.location.hash) {
+            window.history.replaceState(
+              null,
+              document.title,
+              window.location.pathname + window.location.search
             );
           }
-          throw error;
+        } catch (error) {
+          console.error('Profile setup error:', error);
+          showStatus(
+            error.message || 'Could not load your profile. Please refresh and try again.',
+            'error'
+          );
+        }
+      }
+
+      avatarInput.addEventListener('change', () => {
+        try {
+          const file = avatarInput.files?.[0];
+
+          if (!file) {
+            showAvatar(existingAvatarUrl);
+            return;
+          }
+
+          validateAvatar(file);
+
+          if (previewUrl) URL.revokeObjectURL(previewUrl);
+          previewUrl = URL.createObjectURL(file);
+          showAvatar(previewUrl);
+        } catch (error) {
+          avatarInput.value = '';
+          showAvatar(existingAvatarUrl);
+          showStatus(error.message, 'error');
+        }
+      });
+
+      usernameInput.addEventListener('input', () => {
+        if (!avatarInput.files?.length) {
+          showAvatar(existingAvatarUrl);
+        }
+      });
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        if (!currentUser) {
+          showStatus('Your session is missing. Please sign in again.', 'error');
+          return;
         }
 
-        showStatus('Profile saved! Redirecting...', 'success');
-        window.location.replace('../index.html');
-      } catch (error) {
-        console.error('Profile save error:', error);
-        showStatus(
-          error.message || 'Could not save your profile. Please try again.',
-          'error'
-        );
-        submitButton.disabled = false;
-      }
-    });
+        const username = usernameInput.value.trim();
+        const displayName = displayNameInput.value.trim();
+        const avatarFile = avatarInput.files?.[0] || null;
 
-    initialise();
+        if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) {
+          showStatus(
+            'Use 3–20 characters for your username: letters, numbers or underscores.',
+            'error'
+          );
+          usernameInput.focus();
+          return;
+        }
+
+        if (displayName.length > 60) {
+          showStatus('Your display name must be 60 characters or fewer.', 'error');
+          displayNameInput.focus();
+          return;
+        }
+
+        try {
+          if (avatarFile) validateAvatar(avatarFile);
+        } catch (error) {
+          showStatus(error.message, 'error');
+          return;
+        }
+
+        submitButton.disabled = true;
+        showStatus('Saving your profile…');
+
+        try {
+          let avatarUrl = existingAvatarUrl;
+
+          if (avatarFile) {
+            const extensionByType = {
+              'image/jpeg': 'jpg',
+              'image/png': 'png',
+              'image/webp': 'webp'
+            };
+
+            const extension = extensionByType[avatarFile.type];
+            const avatarPath = `${currentUser.id}/avatar.${extension}`;
+
+            const { error: uploadError } = await supabaseClient
+              .storage
+              .from(AVATAR_BUCKET)
+              .upload(avatarPath, avatarFile, {
+                upsert: true,
+                contentType: avatarFile.type,
+                cacheControl: '3600'
+              });
+
+            if (uploadError) throw uploadError;
+
+            const { data: publicUrlData } = supabaseClient
+              .storage
+              .from(AVATAR_BUCKET)
+              .getPublicUrl(avatarPath);
+
+            avatarUrl = publicUrlData.publicUrl;
+          }
+
+          const profileUpdate = {
+            id: currentUser.id,
+            username,
+            display_name: displayName || null,
+            updated_at: new Date().toISOString()
+          };
+
+          if (avatarUrl) {
+            profileUpdate.avatar_url = avatarUrl;
+          }
+
+          const { error: saveError } = await supabaseClient
+            .from('profiles')
+            .upsert(profileUpdate, { onConflict: 'id' });
+
+          if (saveError) {
+            if (saveError.code === '23505') {
+              throw new Error('That username is already taken. Try another.');
+            }
+            throw saveError;
+          }
+
+          showStatus('Profile saved. Taking you to EuroLoot…', 'success');
+          window.location.replace('../index.html');
+        } catch (error) {
+          console.error('Profile save error:', error);
+          showStatus(
+            error.message || 'Could not save your profile. Please try again.',
+            'error'
+          );
+          submitButton.disabled = false;
+        }
+      });
+
+      initialise();
+    })();
   </script>
 </body>
 </html>
