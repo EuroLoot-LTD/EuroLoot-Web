@@ -257,9 +257,34 @@
       }
     }
   </style>
+
+  <style>
+    /* Accessible document navigation, with shared site styles loaded below. */
+    .skip-link { position: fixed; top: 12px; left: 12px; z-index: 1000; transform: translateY(-160%); padding: 12px 18px; background: #003399; color: #fff; font-weight: 700; border-radius: 8px; }
+    .skip-link:focus { transform: translateY(0); }
+    :focus-visible { outline: 3px solid #003399; outline-offset: 4px; }
+    .legal-document { overflow-wrap: anywhere; }
+    .legal-document main { width: 100%; min-width: 0; }
+    .legal-document .header-inner, .legal-document .header-actions, .legal-document .footer-grid { flex-wrap: wrap; }
+    .legal-document nav { flex-wrap: wrap; }
+    .legal-document .legal-page { max-width: 840px; }
+    .legal-document .legal-page h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); line-height: 1.2; }
+    .legal-document .legal-page h2 { font-size: 1.15rem; line-height: 1.4; }
+    .legal-document .legal-page p, .legal-document .legal-page li { line-height: 1.75; }
+    .legal-document .legal-page a { text-decoration: underline; text-underline-offset: 3px; }
+    @media (max-width: 650px) {
+      .legal-document nav { order: 3; width: 100%; margin-left: 0; }
+      .legal-document .header-actions { margin-left: auto; }
+      .legal-document .footer-grid { flex-direction: column; }
+      .legal-document .legal-page { padding-left: 18px; padding-right: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 
-<body>
+<body class="legal-document">
+  <a class="skip-link" href="#main-content">Skip to content</a>
   <header>
     <div class="wrap">
       <div class="header-inner">
@@ -269,8 +294,8 @@
 
         <nav aria-label="Main navigation">
           <a href="../index.html">Home</a>
-          <a href="../index.html">Store</a>
-          <a href="../index.html">Deals</a>
+          <a href="../index.html#store">Store</a>
+          <a href="../index.html#deals">Deals</a>
         </nav>
 
         <div class="header-actions">
@@ -280,7 +305,7 @@
     </div>
   </header>
 
-  <main>
+  <main id="main-content" tabindex="-1">
     <div class="wrap">
       <article class="legal-page">
         <h1>Refund Policy</h1>
@@ -356,7 +381,7 @@
           <strong style="color:#000;">Links</strong>
           <ul class="footer-links">
             <li><a href="../index.html">Home</a></li>
-            <li><a href="../index.html">Store</a></li>
+            <li><a href="../index.html#store">Store</a></li>
             <li><a href="mailto:euroloot.net@gmail.com">Support</a></li>
           </ul>
         </div>
