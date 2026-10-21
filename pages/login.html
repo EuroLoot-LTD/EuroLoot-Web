@@ -64,7 +64,8 @@
       color: #000; text-decoration: none;
     }
     .social-btn:hover:not(:disabled) { background: linear-gradient(to bottom, #eee, #ddd); text-decoration: none; }
-    .social-btn:disabled { opacity: 0.6; cursor: wait; }
+    .social-btn:disabled { opacity: 0.65; cursor: not-allowed; }
+    [hidden] { display: none !important; }
     .policy-consent {
       background: #fff; border: 1px solid var(--border); padding: 10px; margin: 12px 0;
     }
@@ -91,6 +92,7 @@
       .header-actions { gap: 5px; } .icon-btn { padding: 4px; }
     }
   </style>
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
@@ -101,13 +103,13 @@
           <img src="../images/EuroLoot.png" alt="EuroLoot">
         </a>
         <nav aria-label="Main navigation">
-          <a href="../index.html">Store</a>
-          <a href="../index.html">Deals</a>
-          <a href="../index.html">Wishlist</a>
+          <a href="../index.html#store">Store</a>
+          <a href="../index.html#deals">Deals</a>
+          <a href="../index.html#wishlist">Wishlist</a>
         </nav>
         <div class="header-actions">
-          <a href="../index.html" class="icon-btn">Wishlist</a>
-          <a href="../index.html" class="icon-btn">Cart (0)</a>
+          <a href="../index.html#wishlist" class="icon-btn">Wishlist</a>
+          <a href="../index.html#cart" class="icon-btn">Cart</a>
           <a href="login.html" class="btn-signin" aria-current="page">Sign in</a>
         </div>
       </div>
@@ -124,27 +126,28 @@
           <p><strong>Before continuing, please accept all four policies:</strong></p>
           <label>
             <input type="checkbox" id="accept-terms">
-            <span>I accept the <a href="../terms-of-service.html" target="_blank" rel="noopener noreferrer">Terms of Service</a>.</span>
+            <span>I accept the <a href="terms-of-service.html" target="_blank" rel="noopener noreferrer">Terms of Service</a>.</span>
           </label>
           <label>
             <input type="checkbox" id="accept-privacy">
-            <span>I accept the <a href="../privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</span>
+            <span>I accept the <a href="privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</span>
           </label>
           <label>
             <input type="checkbox" id="accept-cookies">
-            <span>I accept the <a href="../cookie-policy.html" target="_blank" rel="noopener noreferrer">Cookie Policy</a>.</span>
+            <span>I accept the <a href="cookie-policy.html" target="_blank" rel="noopener noreferrer">Cookie Policy</a>.</span>
           </label>
           <label>
             <input type="checkbox" id="accept-refunds">
-            <span>I accept the <a href="../refund-policy.html" target="_blank" rel="noopener noreferrer">Refund Policy</a>.</span>
+            <span>I accept the <a href="refund-policy.html" target="_blank" rel="noopener noreferrer">Refund Policy</a>.</span>
           </label>
         </div>
 
         <button type="button" class="social-btn" id="google-button">Continue with Google</button>
-        <button type="button" class="social-btn" id="steam-button">Sign in with Steam</button>
-        <button type="button" class="social-btn" id="discord-button">Sign in with Discord</button>
-        <button type="button" class="social-btn" id="itch-button">Sign in with Itch.io</button>
+        <button type="button" class="social-btn" id="steam-button" disabled aria-describedby="provider-note">Steam — coming later</button>
+        <button type="button" class="social-btn" id="discord-button" disabled aria-describedby="provider-note">Discord — coming later</button>
+        <button type="button" class="social-btn" id="itch-button" disabled aria-describedby="provider-note">Itch.io — coming later</button>
 
+        <p class="intro" id="provider-note">Steam, Discord and Itch.io sign-in are not available yet. Use Google or your existing email account.</p>
         <div style="text-align:center; margin:20px 0; border-bottom:1px solid var(--border); line-height:0.1em;">
           <span style="background:var(--surface); padding:0 10px; color:var(--muted);">Email sign-in</span>
         </div>
@@ -158,9 +161,11 @@
             <label class="form-label" for="password">Password</label>
             <input id="password" name="password" type="password" class="form-input" autocomplete="current-password" required>
           </div>
-          <button type="submit" class="btn-primary">Sign in with email</button>
+          <button id="email-button" type="submit" class="btn-primary">Sign in with email</button>
         </form>
         <p id="auth-message" role="status" aria-live="polite"></p>
+        <button id="auth-retry" class="social-btn" type="button" hidden>Reload sign-in</button>
+        <noscript><p>JavaScript is required to sign in. You can still <a href="../index.html">browse EuroLoot</a>.</p></noscript>
       </section>
     </div>
   </main>
@@ -181,18 +186,18 @@
         <div>
           <strong style="color:#000;">Links</strong>
           <ul style="margin-top:5px;">
-            <li><a href="../index.html">Store</a></li>
-            <li><a href="../index.html">Deals</a></li>
+            <li><a href="../index.html#store">Store</a></li>
+            <li><a href="../index.html#deals">Deals</a></li>
             <li><a href="mailto:euroloot.net@gmail.com">Support</a></li>
           </ul>
         </div>
         <div>
           <strong style="color:#000;">Legal</strong>
           <ul style="margin-top:5px;">
-            <li><a href="../terms-of-service.html">Terms of Service</a></li>
-            <li><a href="../privacy-policy.html">Privacy Policy</a></li>
-            <li><a href="../cookie-policy.html">Cookie Policy</a></li>
-            <li><a href="../refund-policy.html">Refund Policy</a></li>
+            <li><a href="terms-of-service.html">Terms of Service</a></li>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="cookie-policy.html">Cookie Policy</a></li>
+            <li><a href="refund-policy.html">Refund Policy</a></li>
           </ul>
         </div>
       </div>
@@ -209,95 +214,102 @@
 
       const message = document.getElementById('auth-message');
       const googleButton = document.getElementById('google-button');
+      const emailButton = document.getElementById('email-button');
       const emailForm = document.getElementById('email-login-form');
+      const retryButton = document.getElementById('auth-retry');
       const policyIds = ['accept-terms', 'accept-privacy', 'accept-cookies', 'accept-refunds'];
-
-      const SUPABASE_URL = 'https://gepavrbxsdjmmtvwwtdc.supabase.co';
-      const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_zJNUK33LL5YQOu0mKDBY0g_FglwQg6N';
-      const SIGNUP_COMPLETION_URL = 'https://euroloot-ltd.github.io/EuroLoot-Web/pages/signup-completion.html';
-      const POLICY_VERSION = '2026-10-18';
-
-      let supabaseClient;
+      const completionUrl = new URL('signup-completion.html', window.location.href).href;
+      const policyVersion = '2026-10-18';
+      let client;
+      let busy = false;
 
       function showMessage(text) {
         message.textContent = text;
       }
 
-      function allPoliciesAccepted() {
-        return policyIds.every((id) => document.getElementById(id).checked);
+      function setBusy(value, provider = '') {
+        busy = value;
+        googleButton.disabled = value;
+        emailButton.disabled = value;
+        googleButton.textContent = value && provider === 'google' ? 'Connecting to Google…' : 'Continue with Google';
+        emailButton.textContent = value && provider === 'email' ? 'Signing in…' : 'Sign in with email';
+        emailForm.setAttribute('aria-busy', String(value));
       }
 
-      function setGoogleLoading(loading) {
-        googleButton.disabled = loading;
-        googleButton.textContent = loading ? 'Connecting to Google…' : 'Continue with Google';
+      function requirePolicies() {
+        const firstUnchecked = policyIds.map(id => document.getElementById(id)).find(box => !box.checked);
+        if (firstUnchecked) {
+          showMessage('Please accept the four policies before continuing.');
+          firstUnchecked.focus();
+          return false;
+        }
+        // Consent still applies to this request when browser storage is unavailable.
+        try {
+          localStorage.setItem('euroloot_policy_consent_v1', JSON.stringify({
+            policyVersion,
+            acceptedAt: new Date().toISOString()
+          }));
+        } catch (error) {
+          console.warn('Policy preferences could not be remembered.', error);
+        }
+        return true;
       }
+
+      retryButton.addEventListener('click', () => window.location.reload());
 
       try {
-        if (!window.supabase || !window.supabase.createClient) {
-          throw new Error('The authentication library could not load. Please refresh.');
-        }
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+        if (!window.supabase?.createClient) throw new Error('The sign-in service could not load. Check your connection and reload this page.');
+        client = window.supabase.createClient(
+          'https://gepavrbxsdjmmtvwwtdc.supabase.co',
+          'sb_publishable_zJNUK33LL5YQOu0mKDBY0g_FglwQg6N'
+        );
       } catch (error) {
-        showMessage(error.message || 'Authentication could not initialise.');
+        showMessage(error.message || 'Sign-in could not start. Please reload this page.');
         googleButton.disabled = true;
+        emailButton.disabled = true;
+        retryButton.hidden = false;
+        return;
       }
 
       googleButton.addEventListener('click', async () => {
-        if (!supabaseClient) {
-          showMessage('Authentication is unavailable. Please refresh and try again.');
-          return;
-        }
-
-        if (!allPoliciesAccepted()) {
-          showMessage('Please accept all four EuroLoot policies before continuing.');
-          const firstUnchecked = policyIds.map((id) => document.getElementById(id)).find((box) => !box.checked);
-          if (firstUnchecked) firstUnchecked.focus();
-          return;
-        }
-
-        localStorage.setItem('euroloot_policy_consent_v1', JSON.stringify({
-          policyVersion: POLICY_VERSION,
-          acceptedAt: new Date().toISOString()
-        }));
-
-        setGoogleLoading(true);
+        if (busy || !requirePolicies()) return;
+        setBusy(true, 'google');
         showMessage('');
-
         try {
-          const { error } = await supabaseClient.auth.signInWithOAuth({
+          const { error } = await client.auth.signInWithOAuth({
             provider: 'google',
-            options: { redirectTo: SIGNUP_COMPLETION_URL }
+            options: { redirectTo: completionUrl }
           });
           if (error) throw error;
         } catch (error) {
           showMessage('Google sign-in failed: ' + (error.message || 'Please try again.'));
-          setGoogleLoading(false);
+          setBusy(false);
         }
       });
 
-      emailForm.addEventListener('submit', async (event) => {
+      emailForm.addEventListener('submit', async event => {
         event.preventDefault();
-        if (!allPoliciesAccepted()) {
-          showMessage('Please accept all four EuroLoot policies before continuing.');
-          return;
+        if (busy || !emailForm.reportValidity() || !requirePolicies()) return;
+        setBusy(true, 'email');
+        showMessage('');
+        try {
+          const { data, error } = await client.auth.signInWithPassword({
+            email: document.getElementById('email').value.trim(),
+            password: document.getElementById('password').value
+          });
+          if (error) throw error;
+          if (!data.session) throw new Error('Your sign-in could not be verified. Please try again.');
+          document.getElementById('password').value = '';
+          window.location.assign(completionUrl);
+        } catch (error) {
+          showMessage(error.message || 'Email sign-in failed. Please check your details and try again.');
+          setBusy(false);
         }
-        if (!supabaseClient) {
-          showMessage('Authentication is unavailable. Please refresh and try again.');
-          return;
-        }
-        showMessage('Email and password sign-in is not enabled on this page yet. Please use Google.');
       });
 
-      document.getElementById('steam-button').addEventListener('click', () => {
-        showMessage('Steam sign-in has not been configured yet.');
-      });
-      document.getElementById('discord-button').addEventListener('click', () => {
-        showMessage('Discord sign-in has not been configured yet.');
-      });
-      document.getElementById('itch-button').addEventListener('click', () => {
-        showMessage('Itch.io sign-in has not been configured yet.');
-      });
+      // Restore controls when returning from an OAuth provider with the back button.
+      window.addEventListener('pageshow', () => setBusy(false));
     })();
-  </script>
+</script>
 </body>
 </html>
