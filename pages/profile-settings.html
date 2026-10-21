@@ -340,7 +340,9 @@
       .avatar { flex-basis: 70px; width: 70px; height: 70px; }
       .avatar-section { gap: 12px; }
     }
+      [hidden] { display: none !important; }
   </style>
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
@@ -470,6 +472,20 @@
     (() => {
       'use strict';
 
+      if (!window.supabase?.createClient) {
+        const status = document.getElementById('status');
+        status.textContent = 'The sign-in service could not load. Check your connection and reload this page.';
+        status.className = 'error';
+        const retry = document.createElement('button');
+        retry.type = 'button';
+        retry.className = 'btn-secondary';
+        retry.textContent = 'Reload page';
+        retry.addEventListener('click', () => window.location.reload());
+        status.after(retry);
+        return;
+      }
+
+
       const SUPABASE_URL =
         'https://gepavrbxsdjmmtvwwtdc.supabase.co';
 
@@ -479,10 +495,22 @@
       const AVATAR_BUCKET = 'avatars';
       const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 
-      const client = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLIC_KEY
-      );
+
+      let client;
+      try {
+        client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+      } catch (error) {
+        const status = document.getElementById('status');
+        status.textContent = 'The sign-in service could not start. Please reload this page and try again.';
+        status.className = 'error';
+        const retry = document.createElement('button');
+        retry.type = 'button';
+        retry.className = 'btn-secondary';
+        retry.textContent = 'Reload page';
+        retry.addEventListener('click', () => window.location.reload());
+        status.after(retry);
+        return;
+      }
 
       const statusEl = document.getElementById('status');
       const layout = document.getElementById('account-layout');
@@ -496,9 +524,17 @@
       const saveButton = document.getElementById('save-button');
 
       let user = null;
+      let authVersion = 0;
       let savedAvatarUrl = null;
       let removeAvatar = false;
       let previewObjectUrl = null;
+
+      function addSignInLink() {
+        const link = document.createElement('a');
+        link.href = 'login.html';
+        link.textContent = ' Sign in';
+        statusEl.appendChild(link);
+      }
 
       function showStatus(message, type = '') {
         statusEl.textContent = message;
@@ -549,6 +585,7 @@
       }
 
       async function loadProfile() {
+        const loadVersion = authVersion;
         try {
           if (!window.supabase) {
             throw new Error('The sign-in service could not load. Please refresh the page.');
@@ -557,16 +594,19 @@
           const { data: sessionData, error: sessionError } =
             await client.auth.getSession();
 
+          if (loadVersion !== authVersion) return;
           if (sessionError) throw sessionError;
 
           if (!sessionData.session) {
             showStatus('Please sign in to access your account settings.', 'error');
+            addSignInLink();
             return;
           }
 
           const { data: userData, error: userError } =
             await client.auth.getUser();
 
+          if (loadVersion !== authVersion) return;
           if (userError) throw userError;
           if (!userData.user) {
             throw new Error('Your session could not be verified. Please sign in again.');
@@ -580,6 +620,7 @@
             .eq('id', user.id)
             .maybeSingle();
 
+          if (loadVersion !== authVersion) return;
           if (profileError) throw profileError;
 
           // New accounts must finish the initial profile setup first.
@@ -723,7 +764,7 @@
               .from(AVATAR_BUCKET)
               .getPublicUrl(path);
 
-            avatarUrl = publicData.publicUrl;
+            avatarUrl = publicData.publicUrl + '?v=' + Date.now();
             removeAvatar = false;
           }
 
@@ -749,6 +790,12 @@
           savedAvatarUrl = removeAvatar ? null : avatarUrl;
           removeAvatar = false;
 
+          avatarInput.value = '';
+          if (previewObjectUrl) {
+            URL.revokeObjectURL(previewObjectUrl);
+            previewObjectUrl = null;
+          }
+
           showStatus('Your profile has been saved successfully.', 'success');
           renderAvatar(savedAvatarUrl);
 
@@ -764,15 +811,25 @@
         }
       });
 
-      client.auth.onAuthStateChange((_event, session) => {
-        if (!session) {
-          window.setTimeout(() => {
-            showStatus('Your session has ended. Please sign in again.', 'error');
-            layout.hidden = true;
-          }, 0);
+      client.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_OUT') {
+          authVersion++;
+          user = null;
+          savedAvatarUrl = null;
+          avatarInput.value = '';
+          emailInput.value = '';
+          usernameInput.value = '';
+          displayNameInput.value = '';
+          renderAvatar(null);
+          layout.hidden = true;
+          showStatus('Your session has ended. Please sign in again.', 'error');
+          addSignInLink();
         }
       });
 
+      window.addEventListener('pagehide', () => {
+        if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+      });
       loadProfile();
     })();
   </script>
