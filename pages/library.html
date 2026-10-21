@@ -71,24 +71,25 @@
     @media(max-width:620px){header{padding:10px 0}.header-inner{gap:8px}.logo img{height:34px}nav{margin-left:auto}nav a{padding:5px 7px;font-size:12px}.header-actions{flex-basis:100%;margin-left:0;gap:7px;flex-wrap:wrap}.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.page-heading{align-items:flex-start;flex-direction:column}.footer-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.footer-grid>div:first-child{grid-column:1/-1}main{padding-top:22px}}
     @media(max-width:360px){.game-grid{gap:9px}.game-info{padding:8px}.footer-grid{grid-template-columns:1fr}.footer-grid>div:first-child{grid-column:auto}}
   </style>
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 <div id="app">
 <header>
   <div class="wrap">
     <div class="header-inner">
-      <a href="../index.html" class="logo" aria-label="EuroLoot home">
+      <a href="../index.html#store" class="logo" aria-label="EuroLoot home">
         <img src="../images/EuroLoot.png" alt="EuroLoot">
       </a>
 
       <nav id="main-nav">
-        <a href="../index.html" data-i18n="store">Store</a>
+        <a href="../index.html#store" data-i18n="store">Store</a>
         <a href="../index.html#deals" data-i18n="deals">Deals</a>
         <a href="../index.html#wishlist" data-i18n="wishlist">Wishlist</a>
       </nav>
 
       <div class="header-search">
-        <input type="text" id="header-search" placeholder="Search Steam games..." autocomplete="off" data-i18n-ph="search">
+        <input type="text" id="header-search" aria-label="Search games" placeholder="Search Steam games..." autocomplete="off" data-i18n-ph="search">
         <div class="search-dropdown" id="search-dropdown" style="display:none"></div>
       </div>
 
@@ -109,16 +110,16 @@
       <div><h1>My Library</h1><p class="subtitle">All the games you own, together in one place.</p></div>
       <div id="library-count" class="library-count" aria-live="polite">Loading library…</div>
     </div>
-    <div id="status" class="status" role="status">Checking your account…</div>
+    <div id="status" class="status" role="status" aria-live="polite">Checking your account…</div>
     <section id="library-content" hidden>
-      <div class="toolbar"><input type="search" id="library-search" placeholder="Search your library…" aria-label="Search your library"><a class="secondary-btn" href="../index.html">Browse Store</a></div>
+      <div class="toolbar"><input type="search" id="library-search" placeholder="Search your library…" aria-label="Search your library"><a class="secondary-btn" href="../index.html#store">Browse Store</a></div>
       <div id="game-grid" class="game-grid"></div>
       <div id="no-results" class="no-results" hidden>No games match your search.</div>
       <div id="empty-state" class="empty-state" hidden>
         <div class="empty-icon" aria-hidden="true">🎮</div>
         <h2>Your library is waiting for its first game</h2>
         <p>Games will appear here after a purchase has been completed and EuroLoot has confirmed your ownership. You can’t add games to this library manually.</p>
-        <a class="primary-btn" href="../index.html">Browse the Store</a>
+        <a class="primary-btn" href="../index.html#store">Browse the Store</a>
       </div>
     </section>
   </div>
@@ -142,9 +143,9 @@
       <div>
         <strong style="color:#000;">Links</strong>
         <ul style="margin-top:5px;">
-          <li><a href="../index.html" data-i18n="store">Store</a></li>
+          <li><a href="../index.html#store" data-i18n="store">Store</a></li>
           <li><a href="../index.html#deals" data-i18n="deals">Deals</a></li>
-          <li><a href="mailto:support@euroloot.com">Support</a></li>
+          <li><a href="mailto:euroloot.net@gmail.com">Support</a></li>
         </ul>
       </div>
       <div>
@@ -166,53 +167,176 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL='https://gepavrbxsdjmmtvwwtdc.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY='sb_publishable_zJNUK33LL5YQOu0mKDBY0g_FglwQg6N';
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-const statusBox=document.getElementById('status');
-const libraryContent=document.getElementById('library-content');
-const gameGrid=document.getElementById('game-grid');
-const libraryCount=document.getElementById('library-count');
-const librarySearch=document.getElementById('library-search');
-const noResults=document.getElementById('no-results');
-const emptyState=document.getElementById('empty-state');
-let ownedGames=[];
-function showStatus(message,isError=false){statusBox.textContent=message;statusBox.classList.toggle('error',isError);statusBox.hidden=false}
-function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function formatDate(value){if(!value)return '';const date=new Date(value);if(Number.isNaN(date.getTime()))return '';return 'Purchased '+new Intl.DateTimeFormat(undefined,{day:'numeric',month:'short',year:'numeric'}).format(date)}
-function renderLibrary(){
- const query=librarySearch.value.trim().toLocaleLowerCase();
- const filtered=ownedGames.filter(game=>(game.game_title||'').toLocaleLowerCase().includes(query));
- gameGrid.innerHTML=filtered.map(game=>{
-  const title=escapeHtml(game.game_title||'Untitled game');
-  const cover=typeof game.cover_url==='string'&&/^https?:\/\//i.test(game.cover_url)?game.cover_url:'';
-  const coverMarkup=cover?'<img class="game-cover" src="'+escapeHtml(cover)+'" alt="" loading="lazy">':'<div class="cover-placeholder">Cover unavailable</div>';
-  const date=formatDate(game.purchased_at);
-  return '<article class="game-card">'+coverMarkup+'<div class="game-info"><h2 class="game-title">'+title+'</h2>'+(date?'<p class="game-meta">'+escapeHtml(date)+'</p>':'')+'</div></article>';
- }).join('');
- gameGrid.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{const fallback=document.createElement('div');fallback.className='cover-placeholder';fallback.textContent='Cover unavailable';img.replaceWith(fallback)},{once:true}));
- noResults.hidden=filtered.length>0||ownedGames.length===0;
- emptyState.hidden=ownedGames.length!==0;
- gameGrid.hidden=ownedGames.length===0||filtered.length===0;
- libraryCount.textContent=ownedGames.length+(ownedGames.length===1?' game owned':' games owned');
+(() => {
+'use strict';
+const statusBox = document.getElementById('status');
+const libraryContent = document.getElementById('library-content');
+const gameGrid = document.getElementById('game-grid');
+const libraryCount = document.getElementById('library-count');
+const librarySearch = document.getElementById('library-search');
+const noResults = document.getElementById('no-results');
+const emptyState = document.getElementById('empty-state');
+const signInLink = document.getElementById('auth-signin-link');
+const accountLink = document.getElementById('auth-account-link');
+const signOutButton = document.getElementById('auth-signout-button');
+let ownedGames = [];
+let activeUserId = null;
+let requestId = 0;
+let client;
+
+function showStatus(message, isError = false, retry = false) {
+  statusBox.textContent = message;
+  statusBox.classList.toggle('error', isError);
+  statusBox.hidden = false;
+  if (retry) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'secondary-btn';
+    button.textContent = 'Try again';
+    button.style.marginLeft = '12px';
+    button.addEventListener('click', () => client ? loadLibrary().catch(showLoadError) : window.location.reload());
+    statusBox.appendChild(button);
+  }
 }
-async function loadLibrary(){
- const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
- if(sessionError)throw sessionError;
- const session=sessionData.session;
- if(!session){libraryCount.textContent='Sign in required';libraryContent.hidden=true;showStatus('Please sign in to view your library. Your owned games are private to your account.');const link=document.createElement('a');link.href='login.html';link.textContent=' Sign in';link.style.fontWeight='bold';statusBox.append(link);return}
- document.getElementById('auth-signin-link').hidden=true;
- document.getElementById('auth-account-link').style.display='inline-block';
- document.getElementById('auth-signout-button').style.display='inline-block';
- const {data,error}=await supabaseClient.from('user_library').select('game_id, game_title, cover_url, purchased_at').eq('user_id',session.user.id).order('purchased_at',{ascending:false,nullsFirst:false});
- if(error)throw error;
- ownedGames=data||[];statusBox.hidden=true;libraryContent.hidden=false;renderLibrary();
+
+function updateAuthHeader(session) {
+  const signedIn = Boolean(session?.user);
+  signInLink.hidden = signedIn;
+  accountLink.style.display = signedIn ? 'inline-block' : 'none';
+  signOutButton.style.display = signedIn ? 'inline-block' : 'none';
 }
-librarySearch.addEventListener('input',renderLibrary);
-document.getElementById('header-search').addEventListener('keydown',event=>{if(event.key==='Enter'){const term=event.currentTarget.value.trim();window.location.href='../index.html'+(term?'?search='+encodeURIComponent(term):'')}});
-document.getElementById('auth-signout-button').addEventListener('click',async()=>{const button=document.getElementById('auth-signout-button');button.disabled=true;const {error}=await supabaseClient.auth.signOut();if(error){button.disabled=false;showStatus('Could not sign out. Please try again.',true);return}window.location.href='login.html'});
-supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'||!session){document.getElementById('auth-signin-link').hidden=false;document.getElementById('auth-account-link').style.display='none';document.getElementById('auth-signout-button').style.display='none'}});
-loadLibrary().catch(error=>{console.error('Could not load library:',error);libraryCount.textContent='Could not load';showStatus('We couldn’t load your library. Please refresh the page and try again.',true)});
+
+function clearLibrary() {
+  ownedGames = [];
+  gameGrid.replaceChildren();
+  librarySearch.value = '';
+  libraryContent.hidden = true;
+}
+
+function showSignedOut() {
+  activeUserId = null;
+  requestId++;
+  clearLibrary();
+  updateAuthHeader(null);
+  libraryCount.textContent = 'Sign in required';
+  showStatus('Please sign in to view your library. Your owned games are private to your account.');
+  const link = document.createElement('a');
+  link.href = 'login.html';
+  link.textContent = ' Sign in';
+  statusBox.appendChild(link);
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
+}
+
+function formatDate(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return 'Purchased ' + new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
+}
+
+function renderLibrary() {
+  const query = librarySearch.value.trim().toLocaleLowerCase();
+  const filtered = ownedGames.filter(game => String(game.game_title || '').toLocaleLowerCase().includes(query));
+  gameGrid.innerHTML = filtered.map(game => {
+    const title = escapeHtml(game.game_title || 'Untitled game');
+    const cover = typeof game.cover_url === 'string' && /^https?:\/\//i.test(game.cover_url) ? game.cover_url : '';
+    const coverMarkup = cover ? '<img class="game-cover" src="' + escapeHtml(cover) + '" alt="" loading="lazy">' : '<div class="cover-placeholder">Cover unavailable</div>';
+    const date = formatDate(game.purchased_at);
+    return '<article class="game-card">' + coverMarkup + '<div class="game-info"><h2 class="game-title">' + title + '</h2>' + (date ? '<p class="game-meta">' + escapeHtml(date) + '</p>' : '') + '</div></article>';
+  }).join('');
+  gameGrid.querySelectorAll('img').forEach(img => img.addEventListener('error', () => {
+    const fallback = document.createElement('div');
+    fallback.className = 'cover-placeholder';
+    fallback.textContent = 'Cover unavailable';
+    img.replaceWith(fallback);
+  }, { once: true }));
+  noResults.hidden = filtered.length > 0 || ownedGames.length === 0;
+  emptyState.hidden = ownedGames.length !== 0;
+  gameGrid.hidden = ownedGames.length === 0 || filtered.length === 0;
+  libraryCount.textContent = ownedGames.length + (ownedGames.length === 1 ? ' game owned' : ' games owned');
+}
+
+function showLoadError(error) {
+  console.error('Could not load library:', error);
+  clearLibrary();
+  libraryCount.textContent = 'Could not load';
+  showStatus('We couldn’t load your library. Check your connection and try again.', true, true);
+}
+
+async function loadLibrary() {
+  const currentRequest = ++requestId;
+  showStatus('Loading your library…');
+  const { data: sessionData, error: sessionError } = await client.auth.getSession();
+  if (currentRequest !== requestId) return;
+  if (sessionError) throw sessionError;
+  const session = sessionData.session;
+  if (!session) { showSignedOut(); return; }
+  if (activeUserId !== session.user.id) clearLibrary();
+  activeUserId = session.user.id;
+  updateAuthHeader(session);
+
+  const { data, error } = await client.from('user_library')
+    .select('game_id, game_title, cover_url, purchased_at')
+    .eq('user_id', activeUserId)
+    .order('purchased_at', { ascending: false, nullsFirst: false });
+  if (currentRequest !== requestId) return;
+  if (error) throw error;
+  ownedGames = Array.isArray(data) ? data : [];
+  statusBox.hidden = true;
+  libraryContent.hidden = false;
+  renderLibrary();
+}
+
+librarySearch.addEventListener('input', renderLibrary);
+document.getElementById('header-search').addEventListener('keydown', event => {
+  if (event.key === 'Enter') {
+    const term = event.currentTarget.value.trim();
+    const url = new URL('../index.html', window.location.href);
+    if (term) url.searchParams.set('search', term);
+    else url.hash = 'store';
+    window.location.assign(url.href);
+  }
+});
+
+try {
+  if (!window.supabase?.createClient) throw new Error('The sign-in service could not load.');
+  client = window.supabase.createClient(
+    'https://gepavrbxsdjmmtvwwtdc.supabase.co',
+    'sb_publishable_zJNUK33LL5YQOu0mKDBY0g_FglwQg6N'
+  );
+} catch (error) {
+  showStatus('The sign-in service could not load. Check your connection and reload this page.', true, true);
+  libraryCount.textContent = 'Service unavailable';
+  return;
+}
+
+signOutButton.addEventListener('click', async () => {
+  signOutButton.disabled = true;
+  try {
+    const { error } = await client.auth.signOut();
+    if (error) throw error;
+    showSignedOut();
+    window.location.assign('login.html');
+  } catch (error) {
+    showStatus('Could not sign out. Please try again.', true);
+  } finally {
+    signOutButton.disabled = false;
+  }
+});
+
+client.auth.onAuthStateChange((event, session) => {
+  if (!session) {
+    showSignedOut();
+  } else if (event === 'SIGNED_IN' && session.user.id !== activeUserId) {
+    // Leave the Supabase auth callback before making further client calls.
+    window.setTimeout(() => loadLibrary().catch(showLoadError), 0);
+  }
+});
+loadLibrary().catch(showLoadError);
+})();
 </script>
 </body>
 </html>
