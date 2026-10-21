@@ -1,0 +1,36 @@
+name: Website checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser-checks:
+    name: Desktop, mobile and functional checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install test tools on the GitHub runner
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+      - name: Start static preview
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/euroloot-preview.log 2>&1 &
+          node --input-type=module -e 'for(let attempt=0;attempt<30;attempt++){try{const r=await fetch("http://127.0.0.1:4173/index.html");if(r.ok)process.exit(0)}catch{}await new Promise(r=>setTimeout(r,200))}process.exit(1)'
+      - name: Check links, JavaScript and browser journeys
+        env:
+          BASE_URL: http://127.0.0.1:4173/
+        run: node tests/website-checks.mjs
