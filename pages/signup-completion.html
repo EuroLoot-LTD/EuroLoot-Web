@@ -216,7 +216,9 @@
       .form-panel { padding: 16px; }
       h1 { font-size: 22px; }
     }
+      [hidden] { display: none !important; }
   </style>
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
@@ -311,6 +313,20 @@
     (() => {
       'use strict';
 
+      if (!window.supabase?.createClient) {
+        const status = document.getElementById('status');
+        status.textContent = 'The sign-in service could not load. Check your connection and reload this page.';
+        status.className = 'error';
+        const retry = document.createElement('button');
+        retry.type = 'button';
+        retry.className = 'btn-secondary';
+        retry.textContent = 'Reload page';
+        retry.addEventListener('click', () => window.location.reload());
+        status.after(retry);
+        return;
+      }
+
+
       const SUPABASE_URL =
         'https://gepavrbxsdjmmtvwwtdc.supabase.co';
 
@@ -330,14 +346,34 @@
       const avatarPreview = document.getElementById('avatar-preview');
       const submitButton = document.getElementById('submit-button');
 
-      const supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLIC_KEY
-      );
+
+      let supabaseClient;
+      try {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+      } catch (error) {
+        const status = document.getElementById('status');
+        status.textContent = 'The sign-in service could not start. Please reload this page and try again.';
+        status.className = 'error';
+        const retry = document.createElement('button');
+        retry.type = 'button';
+        retry.className = 'btn-secondary';
+        retry.textContent = 'Reload page';
+        retry.addEventListener('click', () => window.location.reload());
+        status.after(retry);
+        return;
+      }
 
       let currentUser = null;
+      let authVersion = 0;
       let existingAvatarUrl = null;
       let previewUrl = null;
+
+      function addSignInLink() {
+        const link = document.createElement('a');
+        link.href = 'login.html';
+        link.textContent = ' Sign in';
+        statusEl.appendChild(link);
+      }
 
       function showStatus(message, type = '') {
         statusEl.textContent = message;
@@ -377,6 +413,7 @@
       }
 
       async function initialise() {
+        const loadVersion = authVersion;
         try {
           if (!window.supabase) {
             throw new Error('The sign-in service could not be loaded. Refresh and try again.');
@@ -386,16 +423,19 @@
           const { data, error } =
             await supabaseClient.auth.getSession();
 
+          if (loadVersion !== authVersion) return;
           if (error) throw error;
 
           if (!data.session) {
             showStatus('You are not signed in. Please sign in to continue.', 'error');
+            addSignInLink();
             return;
           }
 
           const { data: userData, error: userError } =
             await supabaseClient.auth.getUser();
 
+          if (loadVersion !== authVersion) return;
           if (userError) throw userError;
           if (!userData.user) {
             throw new Error('We could not verify your account. Please sign in again.');
@@ -410,6 +450,7 @@
               .eq('id', currentUser.id)
               .maybeSingle();
 
+          if (loadVersion !== authVersion) return;
           if (profileError) throw profileError;
 
           if (profile?.username?.trim()) {
@@ -538,7 +579,7 @@
               .from(AVATAR_BUCKET)
               .getPublicUrl(avatarPath);
 
-            avatarUrl = publicUrlData.publicUrl;
+            avatarUrl = publicUrlData.publicUrl + '?v=' + Date.now();
           }
 
           const profileUpdate = {
@@ -575,6 +616,24 @@
         }
       });
 
+      supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_OUT') {
+          authVersion++;
+          currentUser = null;
+          existingAvatarUrl = null;
+          avatarInput.value = '';
+          usernameInput.value = '';
+          displayNameInput.value = '';
+          showAvatar(null);
+          formPanel.hidden = true;
+          showStatus('Your session has ended. Please sign in again.', 'error');
+          addSignInLink();
+        }
+      });
+
+      window.addEventListener('pagehide', () => {
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+      });
       initialise();
     })();
   </script>
