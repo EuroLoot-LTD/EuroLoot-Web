@@ -2,7 +2,7 @@ const {app,BrowserWindow,Menu,session,shell,dialog}=require('electron');
 const {join}=require('node:path');
 const {pathToFileURL}=require('node:url');
 const {once}=require('node:events');
-const fs=require('node:fs');
+
 let win,db,server,origin,signedIn;
 const smoke=process.argv.includes('--euroloot-smoke');
 app.setName('EuroLoot Staging');

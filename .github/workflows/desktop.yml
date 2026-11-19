@@ -2,6 +2,8 @@ name: Desktop packages
 on:
   push:
     branches: ['work/retail-foundation']
+  pull_request:
+    branches: ['codex/euroloot-experience', 'main']
   workflow_dispatch:
 permissions:
   contents: read
