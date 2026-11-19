@@ -1,0 +1,2 @@
+# The release manifest describes these exact bytes on every operating system.
+fixtures/receipt.txt -text

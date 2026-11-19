@@ -50,6 +50,7 @@ async function start(){
   if(smoke){
     const result=await win.webContents.executeJavaScript("fetch('/api/session').then(r=>r.json()).then(s=>({account:s.account?.id,local:s.local,title:document.title,node:typeof require}))");
     if(result.account!=='fixture-desktop'||!result.local||result.node!=='undefined'||!result.title.includes('EuroLoot'))throw Error('Desktop isolation or session check failed.');
+    if(process.env.EUROLOOT_SMOKE_RESULT)require('node:fs').writeFileSync(process.env.EUROLOOT_SMOKE_RESULT,'passed');
     console.log('EUROLOOT_DESKTOP_SMOKE_OK');app.quit();
   }
 }

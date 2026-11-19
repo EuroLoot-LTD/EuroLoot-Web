@@ -68,9 +68,11 @@ command = [str(executable),'--euroloot-smoke']
 if SYSTEM == 'linux':
     command = ['xvfb-run','-a'] + command
 if '--skip-smoke' not in sys.argv:
-    check=subprocess.run(command,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=90)
+    marker=TARGET/'smoke-ok'
+    marker.unlink(missing_ok=True)
+    check=subprocess.run(command,env={**os.environ,'EUROLOOT_SMOKE_RESULT':str(marker)},stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=90)
     print(check.stdout)
-    if check.returncode or 'EUROLOOT_DESKTOP_SMOKE_OK' not in check.stdout:
+    if check.returncode or not marker.is_file() or marker.read_text()!='passed':
         raise RuntimeError('Packaged application failed launch verification')
 out = ROOT/'artifacts'/'packages'
 out.mkdir(exist_ok=True)
@@ -90,7 +92,7 @@ else:
     # Chromium uses the distro user-namespace sandbox or its official root-owned sandbox helper.
     (pkg/'opt/euroloot/chrome-sandbox').chmod(0o4755)
     package=out/'EuroLoot-Linux-amd64.deb'
-    subprocess.run(['dpkg-deb','--root-owner-group','--build',pkg,package],check=True)
+    subprocess.run(['dpkg-deb','-Zgzip','-z3','--root-owner-group','--build',pkg,package],check=True)
 with package.open('rb') as f:
     (out/(package.name+'.sha256')).write_text(hashlib.file_digest(f,'sha256').hexdigest()+'  '+package.name+'\n')
 print(package)

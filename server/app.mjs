@@ -85,6 +85,12 @@ async function handle(request,env,ctx){
   requireValue(u && supportedCountry(u.country),401,'Sign in to continue.');
   if(write)await limit(db,'write:'+u.id,90,60);
   if(!write&&Object.hasOwn(queries,action))return json({items:await rows(db,queries[action],u.id)});
+  if(!write&&action==='order'){
+    const id=field(url.searchParams.get('id'),36,36,'order');
+    const order=await first(db,'SELECT id,total,discount,country,state,mode,created FROM orders WHERE owner=? AND id=?',u.id,id);
+    requireValue(order,404,'Order unavailable.');
+    return json({...order,lines:await rows(db,'SELECT product,title,cents FROM lines WHERE order_id=? ORDER BY title',id)});
+  }
   if(write&&action==='orders/resume'){
     const o=await first(db,"SELECT * FROM orders WHERE id=? AND owner=? AND mode='stripe-test' AND state='pending'",field(body.id,36,36,'order'),u.id);
     requireValue(o,404,'Pending order unavailable.');
@@ -131,6 +137,7 @@ async function handle(request,env,ctx){
     if(!write){
       if(kind==='status')return json(await first(db,"SELECT (SELECT count(*) FROM accounts) accounts,(SELECT count(*) FROM tickets WHERE state='open') openTickets,(SELECT count(*) FROM orders WHERE state='pending') pendingOrders,(SELECT count(*) FROM submissions WHERE state='submitted') awaitingReview"));
       if(['tickets','submissions'].includes(kind))return json({items:await rows(db,`SELECT * FROM ${kind} ORDER BY created DESC,rowid DESC LIMIT 100`)});
+      if(kind==='promotions')return json({items:await rows(db,'SELECT p.*,r.countries,r.exclusions FROM promotions p LEFT JOIN promotion_rules r USING (code) ORDER BY p.starts DESC LIMIT 100')});
       if(kind==='audit')return json({items:await rows(db,'SELECT * FROM audit ORDER BY id DESC LIMIT 100')});
     }else if(['tickets','submissions'].includes(kind)){
       const states=kind==='tickets'?['open','in_review','closed']:['submitted','under_review','changes_requested','approved','rejected'];
@@ -140,6 +147,20 @@ async function handle(request,env,ctx){
       await db.batch([db.prepare(`UPDATE ${kind} SET state=? WHERE id=?`).bind(body.state,id),
         db.prepare('INSERT INTO audit(actor,action,target) VALUES(?,?,?)').bind(u.id,kind+'.'+body.state,id)]);
       return json({saved:true});
+    }else if(kind==='promotions'){
+      const code=field(body.code,2,30,'coupon code').toUpperCase();
+      requireValue(/^[A-Z0-9_-]+$/.test(code),400,'Use letters, numbers, hyphens or underscores.');
+      const integer=(v,min,max)=>Number.isSafeInteger(v)&&v>=min&&v<=max;
+      requireValue(integer(body.percent,0,100)&&integer(body.fixed,0,1000000)&&((body.percent>0)!==(body.fixed>0)),400,'Choose one discount type.');
+      requireValue(integer(body.starts,0,4102444800)&&integer(body.ends,body.starts+1,4102444800)&&integer(body.maxUses,1,1000000)&&integer(body.perAccount,1,body.maxUses),400,'Check the schedule and usage limits.');
+      const countries=body.countries??[],exclusions=body.exclusions??[];
+      requireValue(Array.isArray(countries)&&countries.length<=27&&countries.every(supportedCountry)&&Array.isArray(exclusions)&&exclusions.length<=100&&exclusions.every(v=>typeof v==='string'&&/^[a-z0-9-]{1,90}$/.test(v)),400,'Invalid regional or product rule.');
+      try{
+        await db.batch([db.prepare('INSERT INTO promotions VALUES(?,?,?,?,?,?,?)').bind(code,body.percent,body.fixed,body.starts,body.ends,body.maxUses,body.perAccount),
+          db.prepare('INSERT INTO promotion_rules VALUES(?,?,?)').bind(code,JSON.stringify(countries),JSON.stringify(exclusions)),
+          db.prepare("INSERT INTO audit(actor,action,target) VALUES(?,'promotion.created',?)").bind(u.id,code)]);
+      }catch(e){if(String(e.cause?.message||e.message).includes('UNIQUE'))throw new HttpError(409,'That coupon already exists.');throw e;}
+      return json({code},201);
     }else if(kind==='refund'){
       const id=field(body.id,36,36,'order');const order=await first(db,'SELECT mode,state FROM orders WHERE id=?',id);
       requireValue(order?.mode==='local-test'&&ctx.local&&['complete','refunded'].includes(order.state),409,'Use the payment provider to refund a paid order.');

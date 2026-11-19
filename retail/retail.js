@@ -56,12 +56,17 @@ async function view(key){
       }
       if(!list.items.length)html+=empty('The queue is empty.');
     }
+    if(session.account.staff){
+      const deals=await api('admin/promotions');
+      html+='<h2>Promotions</h2>'+deals.items.map(p=>item(p.code,(p.percent?p.percent+'%':price(p.fixed))+' off · '+p.max_uses+' redemptions')).join('');
+      html+=entry('promotion',input('code','Coupon code','text',30)+'<label>Discount type<select name="type"><option value="percent">Percentage</option><option value="fixed">Euro cents</option></select></label>'+input('amount','Amount','number')+input('starts','Starts (local time)','datetime-local')+input('ends','Ends (local time)','datetime-local')+input('maxUses','Total redemptions','number')+input('perAccount','Redemptions per account','number')+'<label>Eligible EU country codes (optional)<input name="countries" maxlength="100"></label><label>Excluded product IDs (optional)<input name="exclusions" maxlength="700"></label>','Create promotion');
+    }
     if(session.local&&session.account.staff)html+='<h2>Refund a local test order</h2>'+entry('refund',input('id','Order ID','text',36),'Refund test order');
     return html;
   }
   const {items}=await api(key);
   if(!items.length)return empty({basket:'Your basket is empty.',wishlist:'Your wishlist is empty.',library:'You do not have any EuroLoot entitlements yet.',orders:'You have no EuroLoot orders.'}[key]);
-  if(key==='orders')return items.map(o=>item(o.id,price(o.total)+' · '+o.state+' · '+o.mode+' · '+new Date(o.created*1000).toLocaleDateString(),o.state==='pending'?btn('resume','Resume checkout','data-id="'+esc(o.id)+'"') : '')).join('');
+  if(key==='orders')return items.map(o=>item(o.id,price(o.total)+' · '+o.state+' · '+o.mode+' · '+new Date(o.created*1000).toLocaleDateString(),btn('receipt','Order details','data-id="'+esc(o.id)+'" class="quiet"')+(o.state==='pending'?btn('resume','Resume checkout','data-id="'+esc(o.id)+'"') : ''))).join('');
   if(key==='library')return items.map(p=>item(p.title,p.version?'Version '+p.version+' · '+p.bytes+' bytes · SHA-256 '+p.sha256:'No release is available.',p.version?btn('download','Download','data-id="'+esc(p.id)+'" data-version="'+esc(p.version)+'"'):'' )).join('');
   let html=items.map(p=>item(p.title,price(p.cents),btn('remove','Remove','data-id="'+esc(p.id)+'" class="quiet"'))).join('');
   if(key==='basket')html+='<h2>Subtotal '+price(items.reduce((n,p)=>n+p.cents,0))+'</h2>'+entry('checkout','<label>Billing country<input name="billingCountry" value="'+esc(session.account.country)+'" required minlength="2" maxlength="2"></label><label>Test coupon (optional)<input name="coupon" maxlength="30"></label>',session.local?'Place local test order':'Continue to test checkout');
@@ -84,6 +89,11 @@ document.addEventListener('submit',event=>{
   const form=event.target;if(!form.dataset.form)return;event.preventDefault();
   void act(async()=>{
     const data=Object.fromEntries(new FormData(form)),kind=form.dataset.form;
+    if(kind==='promotion'){
+      const split=v=>v.trim()?v.trim().split(/[ ,]+/):[];
+      await api('admin/promotions',{code:data.code,percent:data.type==='percent'?Number(data.amount):0,fixed:data.type==='fixed'?Number(data.amount):0,starts:Date.parse(data.starts)/1000,ends:Date.parse(data.ends)/1000,maxUses:Number(data.maxUses),perAccount:Number(data.perAccount),countries:split(data.countries.toUpperCase()),exclusions:split(data.exclusions)});
+      await render('Promotion created.');return;
+    }
     if(kind==='checkout'){
       const fingerprint=JSON.stringify(data);
       if(checkoutKey?.fingerprint!==fingerprint)checkoutKey={fingerprint,key:crypto.randomUUID()};
@@ -99,6 +109,10 @@ document.addEventListener('click',event=>{
   const b=event.target.closest('[data-action]');if(!b)return;
   void act(async()=>{
     const {action,id,kind,state,version:release}=b.dataset;
+    if(action==='receipt'){
+      const o=await api('order?id='+encodeURIComponent(id));
+      notice(o.lines.map(l=>l.title+' '+price(l.cents)).join(', ')+' · Discount '+price(o.discount)+' · Total '+price(o.total)+' · '+o.mode);return;
+    }
     if(action==='resume'){const data=await api('orders/resume',{id});location.assign(data.url);return;}
     if(action==='download'){
       const data=await api('download',{product:id,version:release});

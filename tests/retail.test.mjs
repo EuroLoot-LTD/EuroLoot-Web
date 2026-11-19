@@ -132,3 +132,14 @@ test('local database reopens and a consistent SQLite backup restores',async()=>{
     const b=openDatabase(join(dir,'backup.sqlite'));assert.equal(b.sqlite.prepare('PRAGMA integrity_check').get().integrity_check,'ok');assert.equal(b.sqlite.prepare('SELECT count(*) n FROM accounts').get().n,1);b.sqlite.close();
   }finally{rmSync(dir,{recursive:true,force:true});}
 });
+test('admin promotion schedules, region limits, duplicate codes and receipt ownership',async t=>{
+  const {login,call,add}=setup(t);const cookie=await login(),other=await login('other'),admin=await login('operator','admin');
+  const body={code:'FRONLY',percent:0,fixed:100,starts:0,ends:2147483647,maxUses:4,perAccount:1,countries:['FR'],exclusions:[]};
+  assert.equal((await call('/api/admin/promotions',{cookie,body})).status,403);
+  assert.equal((await call('/api/admin/promotions',{cookie:admin,body})).status,201);
+  assert.equal((await call('/api/admin/promotions',{cookie:admin,body})).status,409);
+  await add(cookie);assert.equal((await call('/api/checkout',{cookie,body:orderBody({coupon:'FRONLY'})})).status,409);
+  const order=(await call('/api/checkout',{cookie,body:orderBody()})).data;
+  assert.equal((await call('/api/order?id='+order.id,{cookie})).data.lines[0].cents,400);
+  assert.equal((await call('/api/order?id='+order.id,{cookie:other})).status,404);
+});
