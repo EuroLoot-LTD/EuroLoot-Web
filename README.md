@@ -1,5 +1,7 @@
 # EuroLoot Website
 
+The retail staging branch includes the direct store, backend, development database and desktop packaging. With Node.js 24 installed, run `npm ci` and `npm run dev`. Open the loopback URL printed by the server. See [operations and launch status](OPERATIONS.md) for the test journey, cloud configuration, release procedures and outstanding work.
+
 This took so long to make, and I am not even near finished.
 
 Welcome to the official website repository for **EuroLoot**, an upcoming European gaming retailer and platform built around making gaming more accessible, convenient, and connected across Europe.

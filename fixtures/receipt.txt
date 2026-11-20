@@ -1,0 +1,3 @@
+EuroLoot download verification
+This original text file is the distribution fixture for EuroLoot staging.
+Version 1.0.0

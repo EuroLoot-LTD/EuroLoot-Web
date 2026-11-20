@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.state/
+artifacts/
+.dev.vars
+.env
+.env.*
+!.env.example
+.wrangler/
+.DS_Store

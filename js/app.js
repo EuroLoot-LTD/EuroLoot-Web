@@ -82,18 +82,18 @@
   const heading = (eyebrow,title,text='') => `<div class="page-heading"><div class="eyebrow"><span class="status-dot"></span>${eyebrow}</div><h1>${title}</h1>${text?`<p>${text}</p>`:''}</div>`;
   function renderHome() {
     const featured = catalog[0];
-    $('page-home').innerHTML = `<section class="hero"><div class="wrap hero-content"><div><div class="eyebrow"><span class="status-dot"></span>For the love of the game</div><h1>Play more.<br><em>Spend less.</em></h1><p class="hero-copy">Big adventures. Small prices. Find your next favourite game and make your gaming budget go further.</p>
-      <div class="hero-actions"><a class="btn-primary" href="#deals">Find a great deal <span aria-hidden="true">↗</span></a><a class="btn-secondary" href="#store">Explore games <span aria-hidden="true">→</span></a></div>
+    $('page-home').innerHTML = `<section class="hero"><div class="wrap hero-content"><div><div class="eyebrow"><span class="status-dot"></span>European gaming retail</div><h1>Euro<span>Loot.</span></h1><p class="hero-copy">A European home for games, hardware and collectibles. Browse the EuroLoot store, explore external offers and keep track of the games you want to play.</p>
+      <div class="hero-actions"><a class="btn-primary" href="retail/">Enter the EuroLoot Store <span aria-hidden="true">↗</span></a><a class="btn-secondary" href="#store">Explore games <span aria-hidden="true">→</span></a></div>
       <div class="hero-trust"><span>Live store offers</span><span>No account needed to browse</span><span>Built with Europe at heart</span></div></div><div>
       ${featured?`<article class="featured-card"><div class="featured-top"><span>✦ THE DISCOVERY OF THE DAY</span><span>STEAM / PC</span></div><a href="#game/${featured.id}" aria-label="Explore ${esc(featured.title)}"><img class="featured-image" src="${esc(featured.coverImage)}" alt="${esc(featured.title)}" width="460" height="215" fetchpriority="high"></a>
-      <div class="featured-info"><div><span class="featured-label">Your next adventure?</span><h2>${esc(featured.title)}</h2><div class="featured-savings">${badge(featured.discountPercent)}${featured.basePrice>featured.currentPrice?`<s>${money(featured.basePrice)}</s>`:''}</div><div class="featured-price">${money(featured.currentPrice)} <small>USD</small></div></div><a class="featured-link" href="#game/${featured.id}" aria-label="View ${esc(featured.title)} offers">↗</a></div></article>`:'<div class="skeleton hero-placeholder" aria-label="Loading featured game"></div>'}
+      <div class="featured-info"><div><span class="featured-label">Your next adventure?</span><h2>${esc(featured.title)}</h2><div class="featured-savings">${badge(featured.discountPercent)}${featured.basePrice>featured.currentPrice?`<s>${money(featured.basePrice)}</s>`:''}</div><div class="featured-price">${money(featured.currentPrice)} <small>USD</small></div></div><a class="featured-link" href="#game/${featured.id}" aria-label="View ${esc(featured.title)} offers">↗</a></div></article>`:catalogStatus==='loading'?'<div class="skeleton hero-placeholder" aria-label="Loading featured game"></div>':'<img class="featured-image" src="images/EuroLoot.png" alt="EuroLoot">'}
       <p class="hero-feed-note">Live prices in USD · Confirm your regional price at the store.</p></div></div></section>
       <div class="discovery-strip"><div class="wrap"><div class="discovery-item"><span class="strip-icon" aria-hidden="true">⌕</span><div><strong>Less searching. More playing.</strong><small>Discover games from a live price feed.</small></div></div><div class="discovery-item"><span class="strip-icon" aria-hidden="true">♡</span><div><strong>Keep the good ones close.</strong><small>Save your favourites on this browser.</small></div></div><div class="discovery-item"><span class="strip-icon" aria-hidden="true">↗</span><div><strong>Find it. Compare it. Play it.</strong><small>Complete purchases at the store.</small></div></div></div></div>
       <div class="wrap"><section class="section"><div class="section-head"><div><div class="eyebrow">The good stuff, for less</div><h2>Worth a place in your library.</h2><p>Fresh discoveries from the Steam deals feed.</p></div><a class="text-link" href="#store">All games ↗</a></div>
       <div class="filter-pills"><a class="filter-pill active" href="#store">All discoveries</a><a class="filter-pill" href="#store?filter=under10">Under US$10</a><a class="filter-pill" href="#deals?filter=75">75% off or more</a><a class="filter-pill" href="#store?filter=free">Free to pick up</a><a class="filter-pill" href="#store?filter=surprise">Surprise me ✦</a></div>
       ${catalog.length?grid(catalog.slice(0,8)):feedStatus()}<p class="currency-note">${currencyNote}</p></section>
-      <section class="about-section" id="about"><div class="about-card"><div><div class="eyebrow">Independent. European. Just getting started.</div><h2>A brave new era<br>for European gaming.</h2></div><div><p>EuroLoot is an independent project building a more connected gaming destination for Europe. Right now, you can explore live PC game deals, compare store offers and put together your next-to-play list.</p><a class="text-link" href="mailto:euroloot.net@gmail.com">Help shape what comes next ↗</a></div></div></section>
-      <section class="faq-section"><h2>A few things to know.</h2><details><summary>Can I buy games directly from EuroLoot?</summary><p>EuroLoot is still in development. For now, each live offer takes you to an external store, where you confirm availability, regional pricing and payment. EuroLoot does not process a payment or deliver a game key.</p></details><details><summary>Why are prices shown in US dollars?</summary><p>The current CheapShark data feed reports USD prices. We show the original currency accurately. Your store may show a different regional price or currency; always check before buying.</p></details><details><summary>Where do my wishlist and saved picks live?</summary><p>They are saved in this browser when browser storage is available. They stay after a refresh, without an account. They are not yet synced across devices. Clearing browser data removes them.</p></details><details><summary>What is a discovery link?</summary><p>Make a shortlist with a budget and share the game IDs as a link. The link contains only those IDs and the chosen budget. Anyone with it can load current listings; it does not share your account or browser history.</p></details></section></div>`;
+      <section class="about-section" id="about"><div class="about-card"><div><div class="eyebrow">Independent European retail</div><h2>A brave new era<br>for European gaming.</h2></div><div><p>EuroLoot is an independent European gaming retailer and distribution platform. Right now, you can explore live PC game deals, compare store offers and put together your next-to-play list.</p><a class="text-link" href="mailto:euroloot.net@gmail.com">Help shape what comes next ↗</a></div></div></section>
+      <section class="faq-section"><h2>A few things to know.</h2><details><summary>Can I buy games directly from EuroLoot?</summary><p>The EuroLoot Store lists directly distributed products when available. External offers take you to the named retailer, which confirms the regional price and fulfils the purchase.</p></details><details><summary>Why are prices shown in US dollars?</summary><p>The current CheapShark data feed reports USD prices. We show the original currency accurately. Your store may show a different regional price or currency; always check before buying.</p></details><details><summary>Where do my wishlist and saved picks live?</summary><p>They are saved in this browser when browser storage is available. They stay after a refresh, without an account. They are not yet synced across devices. Clearing browser data removes them.</p></details><details><summary>What is a discovery link?</summary><p>Make a shortlist with a budget and share the game IDs as a link. The link contains only those IDs and the chosen budget. Anyone with it can load current listings; it does not share your account or browser history.</p></details></section></div>`;
   }
   function routeHref(updates) {
     const params = new URLSearchParams(current.params);
@@ -247,7 +247,7 @@
     current=route;const version=++routeVersion;hideSearch();
     document.querySelectorAll('.page').forEach(el=>{const active=el.id==='page-'+route.page;el.hidden=!active;el.classList.toggle('active',active);});
     document.querySelectorAll('[data-route]').forEach(link=>{const active=link.dataset.route===route.page;link.classList.toggle('active',active);if(active)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');});
-    document.title=({home:'EuroLoot — Play more. Spend less.',store:'Discover games — EuroLoot',deals:'Game deals — EuroLoot',wishlist:'Your wishlist — EuroLoot',cart:'Your saved picks — EuroLoot',game:'Game offers — EuroLoot'})[route.page];
+    document.title=({home:'EuroLoot | European gaming retailer',store:'Discover games — EuroLoot',deals:'Game deals — EuroLoot',wishlist:'Your wishlist — EuroLoot',cart:'Your saved picks — EuroLoot',game:'Game offers — EuroLoot'})[route.page];
     if(route.page==='home'){renderHome();if(route.params.get('section')==='about')setTimeout(()=>$('about')?.scrollIntoView(),0);}
     else if(route.page==='store'||route.page==='deals')void renderCatalog(version);
     else if(route.page==='game')void renderGame(version);
@@ -308,19 +308,22 @@
   document.addEventListener('keydown',event=>{if(event.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)&&!document.activeElement.isContentEditable){event.preventDefault();$('header-search').focus();}});
   window.addEventListener('hashchange',()=>{expanded=24;renderRoute();});
   window.addEventListener('storage',event=>{if(event.key===STATE_KEY||event.key===null){state=readState(event.newValue);[...state.wishlist,...state.cart].forEach(g=>cache.set(g.id,cache.get(g.id)||g));updateCounts();if(['wishlist','cart','game'].includes(current.page))renderRoute(false);}});
-  function loadAuth() {
-    const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';script.async=true;
-    script.onload=()=>{
-      try {
-        if(!window.supabase?.createClient)return;
-        const client=window.supabase.createClient('https://gepavrbxsdjmmtvwwtdc.supabase.co','sb_publishable_zJNUK33LL5YQOu0mKDBY0g_FglwQg6N');
-        const update=session=>{const signed=!!session?.user;$('auth-signin-link').hidden=signed;$('auth-account-link').hidden=!signed;$('auth-signout-button').hidden=!signed;};
-        client.auth.getSession().then(({data,error})=>{if(!error)update(data.session);}).catch(()=>{});
-        client.auth.onAuthStateChange((_event,session)=>update(session));
-        $('auth-signout-button').addEventListener('click',async()=>{const button=$('auth-signout-button');button.disabled=true;try{const {error}=await client.auth.signOut();if(error)throw error;update(null);toast('Signed out. Your browser-local saved games are still here.');}catch{toast('Sign-out failed. Please try again.');}finally{button.disabled=false;}});
-      } catch { /* Discovery remains available when account services are offline. */ }
-    };
-    document.head.append(script);
+  async function loadAuth() {
+    try {
+      const response=await fetch('/api/session',{cache:'no-store'});
+      if(!response.ok)return;
+      const {account}=await response.json();
+      $('auth-signin-link').hidden=!!account;
+      $('auth-account-link').hidden=!account;
+      $('auth-signout-button').hidden=!account;
+      $('auth-signout-button').onclick=async()=>{
+        try {
+          const result=await fetch('/api/auth/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+          if(!result.ok)throw Error();
+          await loadAuth();toast('Signed out.');
+        } catch {toast('Sign-out failed. Please try again.');}
+      };
+    } catch { /* Retail accounts may be unavailable in a static preview. */ }
   }
   updateCounts();renderRoute(false);void loadCatalog();loadAuth();
   void request('stores').then(data=>{if(Array.isArray(data))data.forEach(store=>{if(store.storeID&&store.storeName)stores.set(String(store.storeID),String(store.storeName));});if(current.page==='game'&&detailCache.has(current.id))void renderGame(routeVersion);}).catch(()=>{});

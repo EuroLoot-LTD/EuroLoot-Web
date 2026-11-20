@@ -1,0 +1,10 @@
+{
+  "name": "euroloot-retail-staging",
+  "main": "server/worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "assets": {"directory":"./dist","binding":"ASSETS","run_worker_first":true,"not_found_handling":"404-page"},
+  "vars": {"SANDBOX":"1","OAUTH_PROVIDERS":""},
+  "triggers":{"crons":["15 * * * *"]},
+  "d1_databases":[{"binding":"DB","database_name":"euroloot-staging","database_id":"REPLACE_WITH_STAGING_DATABASE_ID","migrations_dir":"db"}],
+  "r2_buckets":[{"binding":"BUILDS","bucket_name":"euroloot-private-staging"}]
+}
