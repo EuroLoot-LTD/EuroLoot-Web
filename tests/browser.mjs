@@ -19,7 +19,13 @@ try {
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     await page.getByRole('link',{name:'Account',exact:true}).click();
     await page.getByLabel('Test invitation').fill(await invite(db,'fixture-'+name));
-    await page.getByRole('button',{name:'Sign in',exact:true}).click();
+    const signIn=page.getByRole('button',{name:'Sign in',exact:true});
+    assert.equal(await signIn.isEnabled(),false);
+    const checks=page.getByRole('checkbox');
+    assert.equal(await checks.count(),4);
+    for(let n=0;n<4;n++){await checks.nth(n).check();assert.equal(await signIn.isEnabled(),n===3);}
+    await checks.nth(1).uncheck();assert.equal(await signIn.isEnabled(),false);await checks.nth(1).check();
+    await signIn.click();
     await page.getByRole('button',{name:'Sign out',exact:true}).waitFor();
     await page.getByRole('link',{name:'Store',exact:true}).click();
     await page.getByRole('button',{name:'Add to basket'}).click();

@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const sections={catalog:['Store','Direct listings from EuroLoot. Commercial sales have not opened.'],basket:['Basket','Digital licences have a quantity of one per account.'],wishlist:['Wishlist','Direct listings saved to your account.'],library:['Library','Your active EuroLoot entitlements and available releases.'],orders:['Orders','Sandbox orders have no monetary value.'],account:['Account','Manage your sign-in, profile and account data.'],support:['Support','Contact EuroLoot about an account, order, download or privacy request.'],developers:['Developer submissions','Submit a listing for review. Publication and distribution require a separate agreement.'],admin:['Administration','Review submissions and support requests.']};
+const sections={catalog:['Store','Browse the EuroLoot catalogue.'],basket:['Basket','Digital licences have a quantity of one per account.'],wishlist:['Wishlist','Direct listings saved to your account.'],library:['Library','Your active EuroLoot entitlements and available releases.'],orders:['Orders','View your purchases, receipts and order status.'],account:['Account','Manage your sign-in, profile and account data.'],support:['Support','Contact EuroLoot about an account, order, download or privacy request.'],developers:['Developer submissions','Submit a listing for review. Publication and distribution require a separate agreement.'],admin:['Administration','Review submissions and support requests.']};
 let session=null,version=0,busy=false,checkoutKey=null,searchItems=[];
 const price=cents=>new Intl.NumberFormat('en-IE',{style:'currency',currency:'EUR'}).format(cents/100);
 const route=()=>Object.hasOwn(sections,location.hash.slice(1))?location.hash.slice(1):'catalog';
@@ -21,9 +21,14 @@ async function api(path,body){
 function catalog(items){return items.map(p=>item(p.title,(p.fixture?'Test fixture · ':'')+p.category+' · '+price(p.cents)+' · '+p.summary,session.account?btn('add','Add to basket','data-id="'+esc(p.id)+'"')+btn('wish','Save to wishlist','data-id="'+esc(p.id)+'" class="quiet"'):link('account','Sign in'))).join('')||empty('There are no matching direct listings.');}
 function account(){
   const u=session.account;
-  if(!u){const country='<label>Account country (two-letter code)<input name="country" value="'+esc(session.country)+'" minlength="2" maxlength="2" required></label>';
-    return session.local?'<h2>Local test sign-in</h2><p>Enter the single-use invitation printed by the EuroLoot development server.</p>'+entry('login',input('code','Test invitation','password',128),'Sign in'):
-    '<h2>Email sign-in</h2>'+entry('request',input('email','Email address','email',254),'Send a code')+entry('login',input('email','Email address','email',254)+input('code','Email code','text',12)+country,'Verify and sign in');
+  if(!u){
+    const agreement='<fieldset id="policies"><legend>Before you continue</legend>'+session.policies.map(p=>'<label><input type="checkbox" id="accept-'+esc(p.id)+'"><span>I accept the <a href="../pages/'+esc(p.page)+'.html" target="_blank" rel="noopener noreferrer">'+esc(p.name)+'</a>.</span></label>').join('')+'</fieldset>';
+    const country='<label>Account country (two-letter code)<input id="account-country" value="'+esc(session.country)+'" minlength="2" maxlength="2" required></label>';
+    const actions=session.local?entry('login',input('code','Test invitation','password',128),'Sign in'):
+      entry('request',input('email','Email address','email',254),'Send sign-in code')+
+      '<div id="verify-email" hidden>'+entry('login',input('email','Verification email','email',254)+input('code','Email code','text',12),'Verify and sign in')+'</div>'+
+      session.providers.map(id=>btn('oauth','Continue with '+({google:'Google',github:'GitHub',discord:'Discord'})[id],'data-provider="'+esc(id)+'"')).join(' ');
+    return '<h2>Sign in to EuroLoot</h2><p>Your library, wishlist and orders are connected to your account.</p>'+agreement+(session.local?'':country)+'<div id="signin-actions">'+actions+'</div>';
   }
   return item(u.name||'Your profile','Account country · '+u.country+' · '+u.role)+entry('profile',input('name','Display name','text',70),'Save display name')+'<p><a href="/api/export" download>Download account data</a></p><p>'+link('support','Request account deletion or privacy assistance')+'</p><div class="buttons">'+btn('logout','Sign out')+btn('revoke','Sign out all sessions','class="quiet"')+'</div>';
 }
@@ -77,10 +82,19 @@ async function render(message=''){
   $('content').setAttribute('aria-busy','true');$('content').textContent='Loading…';
   document.querySelectorAll('#sections a').forEach(a=>a.hash==='#'+key?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
   try{const state=await api('session');if(revision!==version)return;session=state;$('staff-link').hidden=!state.account?.support;
-    const html=await view(key);if(revision===version)$('content').innerHTML=html;
+    const html=await view(key);if(revision===version){$('content').innerHTML=html;updateAcceptance();}
   }catch(e){if(revision===version){$('content').textContent=e.message;}}
   finally{if(revision===version)$('content').setAttribute('aria-busy','false');}
 }
+function acceptance(){
+  return {version:session.policyVersion,...Object.fromEntries(session.policies.map(p=>[p.id,$('accept-'+p.id)?.checked===true]))};
+}
+function updateAcceptance(){
+  if(!$('policies'))return;
+  const allowed=session.policies.every(p=>$('accept-'+p.id).checked);
+  document.querySelectorAll('#signin-actions button').forEach(b=>b.disabled=!allowed);
+}
+document.addEventListener('change',e=>{if(e.target.closest('#policies'))updateAcceptance();});
 async function act(fn){
   if(busy)return;busy=true;
   try{await fn();}catch(e){notice(e.message);}finally{busy=false;}
@@ -89,6 +103,15 @@ document.addEventListener('submit',event=>{
   const form=event.target;if(!form.dataset.form)return;event.preventDefault();
   void act(async()=>{
     const data=Object.fromEntries(new FormData(form)),kind=form.dataset.form;
+    if(kind==='request'||kind==='login'){
+      data.acceptance=acceptance();data.country=($('account-country')?.value||session.country).trim().toUpperCase();
+      if(kind==='request'){
+        await api('auth/request',data);
+        $('verify-email').hidden=false;
+        const verify=$('verify-email').querySelector('form');verify.elements.email.value=data.email;verify.elements.code.focus();
+        notice('Enter the code from your email to continue.');return;
+      }
+    }
     if(kind==='promotion'){
       const split=v=>v.trim()?v.trim().split(/[ ,]+/):[];
       await api('admin/promotions',{code:data.code,percent:data.type==='percent'?Number(data.amount):0,fixed:data.type==='fixed'?Number(data.amount):0,starts:Date.parse(data.starts)/1000,ends:Date.parse(data.ends)/1000,maxUses:Number(data.maxUses),perAccount:Number(data.perAccount),countries:split(data.countries.toUpperCase()),exclusions:split(data.exclusions)});
@@ -109,6 +132,10 @@ document.addEventListener('click',event=>{
   const b=event.target.closest('[data-action]');if(!b)return;
   void act(async()=>{
     const {action,id,kind,state,version:release}=b.dataset;
+    if(action==='oauth'){
+      const result=await api('auth/oauth',{provider:b.dataset.provider,country:$('account-country').value.trim().toUpperCase(),acceptance:acceptance()});
+      location.assign(result.url);return;
+    }
     if(action==='receipt'){
       const o=await api('order?id='+encodeURIComponent(id));
       notice(o.lines.map(l=>l.title+' '+price(l.cents)).join(', ')+' · Discount '+price(o.discount)+' · Total '+price(o.total)+' · '+o.mode);return;
@@ -116,7 +143,7 @@ document.addEventListener('click',event=>{
     if(action==='resume'){const data=await api('orders/resume',{id});location.assign(data.url);return;}
     if(action==='download'){
       const data=await api('download',{product:id,version:release});
-      if(data.bytes>16*1024*1024)throw Error('This staging client supports verified downloads up to 16 MiB.');
+      if(data.bytes>16*1024*1024)throw Error('This client supports verified downloads up to 16 MiB.');
       const response=await fetch(data.url,{cache:'no-store'});
       if(!response.ok)throw Error('Download expired or unavailable.');
       const bytes=await response.arrayBuffer();

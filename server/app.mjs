@@ -1,5 +1,6 @@
+import {policies,policyVersion} from './consent.mjs';
 import {supportedCountry,field,json,secure,requireValue,first,rows,run,input,digest,randomToken,HttpError} from './policy.mjs';
-import {auth,current,limit} from './accounts.mjs';
+import {auth,current,limit,callback,providerNames} from './accounts.mjs';
 import {stripeCheckout,webhook} from './payments.mjs';
 const productFields='id,title,summary,category,cents,fixture';
 const regionSQL="(json_array_length(countries)=0 OR ? IN (SELECT value FROM json_each(countries)))";
@@ -69,6 +70,7 @@ async function handle(request,env,ctx){
   if(p==='/healthz' && method==='GET'){requireValue(db,503,'Database unavailable.');await first(db,'SELECT id FROM accounts LIMIT 1');return json({status:'ok',commerce:'sandbox-only'});}
   if(p==='/webhooks/stripe' && method==='POST')return webhook(request,env);
   requireValue(supportedCountry(ctx.country),403,'EuroLoot serves the European Union. Your connection could not be verified in a supported country.');
+  if(p==='/auth/callback'&&method==='GET'&&!ctx.local)return callback(request,env,ctx);
   if(!p.startsWith('/api/')){
     requireValue(method==='GET'||method==='HEAD',405,'Method unavailable.');
     return env.ASSETS.fetch(request);
@@ -80,7 +82,7 @@ async function handle(request,env,ctx){
   const body=write?await input(request):{};
   if(!write&&action==='catalog')return json({items:await rows(db,`SELECT ${productFields} FROM products WHERE available=1 AND (fixture=0 OR ?='1') AND ${regionSQL} ORDER BY title`,env.SANDBOX||'0',ctx.country),sandbox:env.SANDBOX==='1'});
   const u=await current(request,env,ctx.local===true);
-  if(!write&&action==='session')return json({country:ctx.country,local:ctx.local===true,sandbox:env.SANDBOX==='1',account:u?{id:u.id,country:u.country,name:u.display_name,role:u.role,staff:isStaff(u),support:handlesTickets(u)}:null});
+  if(!write&&action==='session')return json({policies,policyVersion,providers:providerNames(env),country:ctx.country,local:ctx.local===true,sandbox:env.SANDBOX==='1',account:u?{id:u.id,country:u.country,name:u.display_name,role:u.role,staff:isStaff(u),support:handlesTickets(u)}:null});
   if(write&&action.startsWith('auth/'))return auth(request,env,ctx,action.slice(5),body,u);
   requireValue(u && supportedCountry(u.country),401,'Sign in to continue.');
   if(write)await limit(db,'write:'+u.id,90,60);
@@ -97,7 +99,7 @@ async function handle(request,env,ctx){
     return json({url:await stripeCheckout(env,o,url.origin)});
   }
   if(!write&&action==='export'){
-    const result={profile:{name:u.display_name,country:u.country,role:u.role}};
+    const result={acceptances:await rows(db,'SELECT version,documents,method,accepted_at FROM policy_acceptances WHERE owner=? ORDER BY id',u.id),profile:{name:u.display_name,country:u.country,role:u.role}};
     for(const [name,sql] of Object.entries(queries))result[name]=await rows(db,sql,u.id);
     return json(result,200,{'Content-Disposition':'attachment; filename="EuroLoot-account.json"'});
   }

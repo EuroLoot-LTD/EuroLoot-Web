@@ -9,6 +9,8 @@ import {localEnvironment} from '../scripts/local.mjs';
 import {dispatch} from '../server/app.mjs';
 import worker from '../server/worker.mjs';
 import {euCountries} from '../server/policy.mjs';
+import {policyVersion} from '../server/consent.mjs';
+const accepted={version:policyVersion,terms:true,privacy:true,cookies:true,refunds:true};
 const origin='https://staging.example';
 const product='delivery-check';
 const orderBody=(more={})=>({billingCountry:'IE',requestKey:crypto.randomUUID(),...more});
@@ -24,7 +26,7 @@ function setup(t){
   const call=async(...args)=>{const r=await request(...args);const data=await r.json();return {status:r.status,data};};
   async function login(id='buyer',role='customer'){
     const code=await invite(db,'fixture-'+id,role);
-    const r=await request('/api/auth/verify',{body:{code}});
+    const r=await request('/api/auth/verify',{body:{code,acceptance:accepted}});
     assert.equal(r.status,200);return r.headers.get('set-cookie').split(';')[0];
   }
   async function add(cookie){assert.equal((await call('/api/basket',{cookie,body:{product,add:true}})).status,200);}
@@ -39,10 +41,10 @@ test('EU membership and edge origin policy cover assets and APIs',async t=>{
 });
 test('private records require sign-in, one-use invitations expire and sessions revoke',async t=>{
   const {db,request,login}=setup(t);for(const name of ['orders','library','tickets','admin/status','export'])assert.equal((await request('/api/'+name)).status,401);
-  const code=await invite(db,'fixture-session');const p='/api/auth/verify';let r=await request(p,{body:{code}});assert.equal(r.status,200);assert.match(r.headers.get('set-cookie'),/HttpOnly/);
-  assert.equal((await request(p,{body:{code}})).status,401);
+  const code=await invite(db,'fixture-session');const p='/api/auth/verify';let r=await request(p,{body:{code,acceptance:accepted}});assert.equal(r.status,200);assert.match(r.headers.get('set-cookie'),/HttpOnly/);
+  assert.equal((await request(p,{body:{code,acceptance:accepted}})).status,401);
   const cookie=await login();await request('/api/sessions/revoke',{cookie,body:{}});assert.equal((await request('/api/orders',{cookie})).status,401);
-  const old=await invite(db,'fixture-expired');db.sqlite.exec('UPDATE invitations SET expires=0');assert.equal((await request(p,{body:{code:old}})).status,401);
+  const old=await invite(db,'fixture-expired');db.sqlite.exec('UPDATE invitations SET expires=0');assert.equal((await request(p,{body:{code:old,acceptance:accepted}})).status,401);
 });
 test('input size, same-origin writes, content type and lack of provider configuration',async t=>{
   const {request}=setup(t);
@@ -50,7 +52,7 @@ test('input size, same-origin writes, content type and lack of provider configur
   assert.equal((await request('/api/tickets',{body:{},headers:{'content-type':'text/plain'}})).status,415);
   assert.equal((await request('/api/tickets',{raw:'['})).status,400);
   assert.equal((await request('/api/tickets',{raw:'x'.repeat(12500)})).status,413);
-  assert.equal((await request('/api/auth/request',{local:false,body:{email:'example@example.test'}})).status,503);
+  assert.equal((await request('/api/auth/request',{local:false,body:{email:'example@example.test',country:'IE',acceptance:accepted}})).status,503);
 });
 test('ownership, atomic basket snapshot, coupon, idempotent replay and immediate refund revocation',async t=>{
   const {db,request,call,login,add}=setup(t);const cookie=await login(),other=await login('second'),admin=await login('staff','admin');
@@ -105,9 +107,9 @@ test('support and submission review enforce per-owner reads, distinct privileges
 });
 test('public deployment ignores local invitations, hides fixtures, and enforces auth rate limits',async t=>{
   const {env,request,db,call}=setup(t);env.SANDBOX='0';assert.equal((await call('/api/catalog')).data.items.length,0);
-  const token=await invite(db,'fixture-local');assert.equal((await request('/api/auth/verify',{local:false,body:{code:token,email:'a@example.test'}})).status,400);
-  for(let i=0;i<18;i++)await request('/api/auth/verify',{body:{code:'a'.repeat(48)}});
-  assert.equal((await request('/api/auth/verify',{body:{code:'a'.repeat(48)}})).status,429);
+  const token=await invite(db,'fixture-local');assert.equal((await request('/api/auth/verify',{local:false,body:{code:token,email:'a@example.test',acceptance:accepted}})).status,400);
+  for(let i=0;i<18;i++)await request('/api/auth/verify',{body:{code:'a'.repeat(48),acceptance:accepted}});
+  assert.equal((await request('/api/auth/verify',{body:{code:'a'.repeat(48),acceptance:accepted}})).status,429);
 });
 test('Stripe test notifications validate signatures, currency, amount and billing country; fulfil only once',async t=>{
   const {db,env,request,login,add}=setup(t);env.STRIPE_TEST_KEY='sk_test_fixture';env.STRIPE_WEBHOOK_SECRET='whsec_fixture';
@@ -142,4 +144,46 @@ test('admin promotion schedules, region limits, duplicate codes and receipt owne
   const order=(await call('/api/checkout',{cookie,body:orderBody()})).data;
   assert.equal((await call('/api/order?id='+order.id,{cookie})).data.lines[0].cents,400);
   assert.equal((await call('/api/order?id='+order.id,{cookie:other})).status,404);
+});
+test('all four current documents are required on every login and registration entry point',async t=>{
+  const {db,call,request}=setup(t);const code=await invite(db,'fixture-consent');
+  for(const [i,method] of ['request','verify','exchange','oauth'].entries()){
+    for(const bad of [null,{...accepted,terms:false},{...accepted,privacy:i},{...accepted,cookies:'true'},{...accepted,refunds:false},{...accepted,version:'old'}]){
+      db.sqlite.exec('DELETE FROM rate_windows');
+      assert.equal((await call('/api/auth/'+method,{body:{code,email:'fixture@example.test',acceptance:bad}})).status,422);
+    }
+  }
+  assert.equal(db.sqlite.prepare('SELECT count(*) n FROM sessions').get().n,0);
+  const ok=await request('/api/auth/verify',{body:{code,acceptance:accepted}});assert.equal(ok.status,200);
+  const cookie=ok.headers.get('set-cookie').split(';')[0];
+  assert.deepEqual(JSON.parse((await call('/api/export',{cookie})).data.acceptances[0].documents),['terms','privacy','cookies','refunds']);
+  db.sqlite.exec("UPDATE sessions SET policy_version='obsolete'");assert.equal((await request('/api/orders',{cookie})).status,401);
+});
+test('email registration and sign-in with a verified provider response; OAuth PKCE round-trip and replay rejection',async t=>{
+  const {env,db,request}=setup(t);
+  env.AUTH_ORIGIN='https://fixture.supabase.co';env.AUTH_PUBLISHABLE_KEY='fixture-key';env.OAUTH_PROVIDERS='google,github,discord';
+  const id=crypto.randomUUID(),claims={sub:id,exp:Math.floor(Date.now()/1000)+600,aal:'aal1'};
+  const token='fixture.'+Buffer.from(JSON.stringify(claims)).toString('base64url')+'.test',seen=[];
+  t.mock.method(globalThis,'fetch',async(raw,opts)=>{
+    const u=new URL(raw);assert.equal(u.origin,env.AUTH_ORIGIN);seen.push([u.pathname,opts.body?JSON.parse(opts.body):null]);
+    if(u.pathname.endsWith('/otp'))return Response.json({});
+    if(u.pathname.endsWith('/verify')||u.pathname.endsWith('/token'))return Response.json({access_token:token});
+    if(u.pathname.endsWith('/user')){assert.equal(opts.headers.Authorization,'Bearer '+token);return Response.json({id,email_confirmed_at:'2026-11-20'});}
+    throw Error('Unexpected identity route');
+  });
+  const body={country:'IE',email:'fixture@example.test',acceptance:accepted};
+  assert.equal((await request('/api/auth/request',{local:false,body})).status,200);
+  const signed=await request('/api/auth/verify',{local:false,body:{...body,code:'123456'}});
+  assert.equal(signed.status,200);assert.match(signed.headers.get('set-cookie'),/^__Host-el=.*Secure/);
+  for(const provider of ['google','github','discord']){
+    const begin=await request('/api/auth/oauth',{local:false,body:{...body,provider}});
+    const cookie=begin.headers.get('set-cookie').split(';')[0];const url=new URL((await begin.json()).url);
+    assert.equal(url.searchParams.get('provider'),provider);assert.equal(url.searchParams.get('redirect_to'),origin+'/auth/callback');
+    const route='/auth/callback?code=example-authorisation';assert.equal((await request(route,{local:false})).status,401);
+    const response=await request(route,{local:false,cookie});assert.equal(response.status,303);
+    const exchange=seen.findLast(row=>row[0].endsWith('/token'))[1];
+    assert.equal(createHash('sha256').update(exchange.code_verifier).digest('base64url'),url.searchParams.get('code_challenge'));
+    assert.equal((await request(route,{local:false,cookie})).status,401);
+  }
+  assert.equal(db.sqlite.prepare('SELECT count(*) n FROM policy_acceptances').get().n,4);
 });
